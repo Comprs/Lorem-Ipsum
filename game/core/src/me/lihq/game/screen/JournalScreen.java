@@ -2,6 +2,11 @@ package me.lihq.game.screen;
 
 import me.lihq.game.GameMain;
 
+/**
+ * Used to control the initialisation and drawing of the Journal Screen.
+ * @author jacobwunwin
+ *
+ */
 public class JournalScreen extends AbstractScreen {
 
     public JournalScreen(GameMain game) {
