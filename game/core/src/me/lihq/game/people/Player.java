@@ -3,6 +3,7 @@ package me.lihq.game.people;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import me.lihq.game.GameMain;
+import me.lihq.game.Settings;
 import me.lihq.game.models.Clue;
 import me.lihq.game.models.Room;
 import me.lihq.game.screen.elements.SpeechBox;
@@ -42,6 +43,7 @@ public class Player extends AbstractPerson
     {
         super(name, "people/player/" + imgSrc, tileX, tileY);
         importDialogue("Player.JSON");
+        animTime = Settings.TPS / 7f;
     }
 
     /**
