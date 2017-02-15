@@ -28,7 +28,7 @@ public class Journal {
         clues, notepad, speech
     }
 
-    Stage stage;
+    public Stage stage;
     Skin uiSkin;
     State state;
     Sprite backgroundImage;
@@ -39,9 +39,9 @@ public class Journal {
 
     public Journal(final GameMain game) {
         this.uiSkin = initSkin();
-        this.stage = this.initJournal(uiSkin);
+        this.stage = this.initJournal(this.uiSkin, game);
         this.state = State.clues; //start on the clues view
-        Gdx.input.setInputProcessor(stage);
+        //Gdx.input.setInputProcessor(stage);
         this.batch = new SpriteBatch();
 
         this.cluesView = new Clues();
@@ -50,17 +50,17 @@ public class Journal {
     }
 
     public Skin initSkin(){
-        Skin skin = new Skin(Gdx.files.internal("assets/skins/skin_pretty/skin.json")); //load ui skin from assets
+        Skin skin = new Skin(Gdx.files.internal("skins/skin_pretty/skin.json")); //load ui skin from assets
         return skin;
     }
 
-    public Stage initJournal(Skin uiSkin) {
+    public Stage initJournal(Skin uiSkin, GameMain game) {
 
         Stage stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         //create a sprite for the journal background
-        Texture journalBackground = new Texture(Gdx.files.internal("assets/Open_journal.png"));
+        Texture journalBackground = new Texture(Gdx.files.internal("Open_journal.png"));
         this.backgroundImage = new Sprite(journalBackground);
-        this.backgroundImage.setPosition(220, 90);
+        this.backgroundImage.setPosition(50, 90);
 
         //++++CREATE JOURNAL HOME STAGE++++
 
@@ -68,21 +68,18 @@ public class Journal {
         final TextButton cluesButton = new TextButton("Clues", uiSkin);
         final TextButton questionsButton = new TextButton("Interview Log", uiSkin);
         final TextButton notepadButton = new TextButton("Notepad", uiSkin);
+        final TextButton closeButton = new TextButton("Close", uiSkin);
         Label journalLabel = new Label ("Journal", uiSkin);
 
         //textButton.setPosition(200, 200);
-        journalLabel.setPosition(360, 600);
+        journalLabel.setPosition(240, 600);
         journalLabel.setColor(Color.BLACK);
         journalLabel.setFontScale(1.5f);
 
-        cluesButton.setPosition(380, 400);
-        questionsButton.setPosition(350, 350);
-        notepadButton.setPosition(370, 300);
-
-        this.stage.addActor(cluesButton);
-        this.stage.addActor(journalLabel);
-        this.stage.addActor(notepadButton);
-        this.stage.addActor(questionsButton);
+        cluesButton.setPosition(260, 400);
+        questionsButton.setPosition(230, 350);
+        notepadButton.setPosition(250, 300);
+        closeButton.setPosition(260, 250);
 
         // Add a listener to the clues button
         cluesButton.addListener(new ChangeListener() {
@@ -107,6 +104,20 @@ public class Journal {
                 state = State.speech;
             }
         });
+
+       //add a listener for the show interview log button
+        closeButton.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                System.out.println("Close Journa button was pressed");
+                game.setScreen(game.navigationScreen);
+            }
+        });
+
+        stage.addActor(cluesButton);
+        stage.addActor(journalLabel);
+        stage.addActor(notepadButton);
+        stage.addActor(questionsButton);
+        stage.addActor(closeButton);
 
         return stage;
     }

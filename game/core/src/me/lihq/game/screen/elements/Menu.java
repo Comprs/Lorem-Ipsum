@@ -105,7 +105,7 @@ public class Menu
             text = new Label("Pause", textStyle);
 
         } else {
-            text = new Label("Welcome To the Lorem Ipsum Murder Mystery Game!", textStyle);
+            text = new Label("Welcome To the SEPR (Lorem Ipsum) Murder Mystery Game!", textStyle);
             newGameButton.setText("New Game");
         }
 

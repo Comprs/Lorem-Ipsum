@@ -32,15 +32,15 @@ public class JournalScreen extends AbstractScreen {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         //Setting up the camera
-        camera.setToOrtho(false, w, h);
-        camera.update();
+        this.camera.setToOrtho(false, w, h);
+        this.camera.update();
 
         this.journal = new Journal(game);
     }
 
     @Override
     public void show() {
-        // TODO Auto-generated method stub
+        Gdx.input.setInputProcessor(this.journal.stage);
     }
 
     @Override
