@@ -25,4 +25,23 @@ public class Notepad {
     public Stage getStage() {
         return stage;
     }
+
+    /**
+     * This method disposes of all elements
+     */
+    public void dispose()
+    {
+        //stage.dispose();
+    }
+
+    /**
+     * This method is called when the window is resized.
+     *
+     * @param width  - The new width
+     * @param height - The new height
+     */
+    public void resize(int width, int height)
+    {
+        //stage.getViewport().update(width, height, true);
+    }
 }

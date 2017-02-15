@@ -78,7 +78,15 @@ public class StatusBar
         TextButton personalityMeter = new TextButton("Personality Meter", buttonSkin);
         statusBar.add(personalityMeter).uniform();
 
-        TextButton inventoryButton = new TextButton("Inventory", buttonSkin);
+        TextButton inventoryButton = new TextButton("Journal", buttonSkin);
+        inventoryButton.addListener(new ClickListener()
+        {
+            @Override
+            public void clicked(InputEvent event, float x, float y)
+            {
+                game.setScreen(game.journalScreen);
+            }
+        });
         statusBar.add(inventoryButton).uniform();
 
         TextButton pauseButton = new TextButton("Pause", buttonSkin);
@@ -91,6 +99,7 @@ public class StatusBar
                 game.setScreen(pauseScreen);
             }
         });
+
 
         stage.addActor(statusBar);
     }
