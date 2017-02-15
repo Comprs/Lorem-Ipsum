@@ -1,9 +1,9 @@
 package me.lihq.game.screen.elements.journal;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -25,16 +25,15 @@ import me.lihq.game.GameMain;
 public class Journal {
 
     enum State {
-        clues, notepad, speech
+        clues, notepad
     }
 
     public Stage stage;
     Skin uiSkin;
     State state;
     Sprite backgroundImage;
-    Clues cluesView;
+    public Clues cluesView;
     Notepad notepadView;
-    Speech speechView;
     SpriteBatch batch;
 
     public Journal(final GameMain game) {
@@ -44,9 +43,8 @@ public class Journal {
         //Gdx.input.setInputProcessor(stage);
         this.batch = new SpriteBatch();
 
-        this.cluesView = new Clues();
-        this.notepadView = new Notepad(uiSkin);
-        this.speechView = new Speech();
+        this.cluesView = new Clues(game, this.uiSkin);
+        this.notepadView = new Notepad(game, uiSkin);
     }
 
     public Skin initSkin(){
@@ -62,11 +60,8 @@ public class Journal {
         this.backgroundImage = new Sprite(journalBackground);
         this.backgroundImage.setPosition(50, 90);
 
-        //++++CREATE JOURNAL HOME STAGE++++
-
         //Create buttons and labels
         final TextButton cluesButton = new TextButton("Clues", uiSkin);
-        final TextButton questionsButton = new TextButton("Interview Log", uiSkin);
         final TextButton notepadButton = new TextButton("Notepad", uiSkin);
         final TextButton closeButton = new TextButton("Close", uiSkin);
         Label journalLabel = new Label ("Journal", uiSkin);
@@ -77,23 +72,14 @@ public class Journal {
         journalLabel.setFontScale(1.5f);
 
         cluesButton.setPosition(260, 400);
-        questionsButton.setPosition(230, 350);
-        notepadButton.setPosition(250, 300);
-        closeButton.setPosition(260, 250);
+        notepadButton.setPosition(250, 350);
+        closeButton.setPosition(260, 300);
 
         // Add a listener to the clues button
         cluesButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 System.out.println("Clues button was pressed");
-                state = State.clues;
-            }
-        });
-
-        //add a listener for the show interview log button
-        questionsButton.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                System.out.println("Questions button was pressed");
-                state = State.notepad;
+                state = State.clues; //change the journal state to that of the clues table
             }
         });
 
@@ -101,7 +87,7 @@ public class Journal {
         notepadButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 System.out.println("Notepad button was pressed");
-                state = State.speech;
+                state = State.notepad;
             }
         });
 
@@ -116,10 +102,25 @@ public class Journal {
         stage.addActor(cluesButton);
         stage.addActor(journalLabel);
         stage.addActor(notepadButton);
-        stage.addActor(questionsButton);
         stage.addActor(closeButton);
 
         return stage;
+    }
+
+    public void updateMain(){
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(this.stage);
+        switch (this.state){
+            case clues:
+                multiplexer.addProcessor(this.cluesView.getStage());
+                break;
+            case notepad:
+                multiplexer.addProcessor(this.notepadView.getStage());
+                break;
+            default:
+                break;
+        }
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     public void renderMain() {
@@ -136,9 +137,6 @@ public class Journal {
             case notepad:
                 this.notepadView.renderMain();
                 break;
-            case speech:
-                this.speechView.renderMain();
-                break;
             default:
                 break;
         }
@@ -153,8 +151,6 @@ public class Journal {
         stage.dispose();
         this.cluesView.dispose();
         this.notepadView.dispose();
-        this.speechView.dispose();
-
     }
 
     /**
@@ -170,6 +166,5 @@ public class Journal {
         //update the secondary GUI components
         this.cluesView.resize(width, height);
         this.notepadView.resize(width, height);
-        this.speechView.resize(width, height);
     }
 }

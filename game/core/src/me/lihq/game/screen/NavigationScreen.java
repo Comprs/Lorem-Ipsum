@@ -195,6 +195,8 @@ public class NavigationScreen extends AbstractScreen
         if (roomTag != null) {
             roomTag.update();
         }
+
+        this.statusBar.updateMain();
     }
 
     /**
@@ -302,7 +304,7 @@ public class NavigationScreen extends AbstractScreen
 
         spriteBatch.end();
 
-        statusBar.render();
+        statusBar.renderMain();
         speechboxMngr.render();
 
     }

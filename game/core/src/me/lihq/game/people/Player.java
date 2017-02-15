@@ -241,5 +241,11 @@ public class Player extends AbstractPerson
         }
     }
 
-
+    /**
+     * This method returns the current score of the player
+     * @return (Int) - returns the score
+     */
+    public int getScore() {
+        return score;
+    }
 }

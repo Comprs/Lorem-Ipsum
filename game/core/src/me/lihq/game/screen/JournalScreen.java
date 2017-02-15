@@ -2,7 +2,6 @@ package me.lihq.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import me.lihq.game.GameMain;
 import me.lihq.game.screen.elements.journal.Journal;
@@ -21,10 +20,6 @@ public class JournalScreen extends AbstractScreen {
      */
     private OrthographicCamera camera = new OrthographicCamera();
 
-    /**
-     * This is the viewpoint for the camera to take
-     */
-    private Viewport viewport;
 
     public JournalScreen(GameMain game) {
         super(game);
@@ -40,12 +35,13 @@ public class JournalScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(this.journal.stage);
+        this.journal.cluesView.updateMain(); //update the clues table
+
     }
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
+        this.journal.updateMain();
     }
 
     @Override
