@@ -29,25 +29,24 @@ public class Journal {
     }
 
     public Stage stage;
-    Skin uiSkin;
-    State state;
-    Sprite backgroundImage;
+    private Skin uiSkin;
+    private State state;
+    private Sprite backgroundImage;
     public Clues cluesView;
-    Notepad notepadView;
-    SpriteBatch batch;
+    private Notepad notepadView;
+    private SpriteBatch batch;
 
     public Journal(final GameMain game) {
         this.uiSkin = initSkin();
         this.stage = this.initJournal(this.uiSkin, game);
         this.state = State.clues; //start on the clues view
-        //Gdx.input.setInputProcessor(stage);
         this.batch = new SpriteBatch();
 
         this.cluesView = new Clues(game, this.uiSkin);
         this.notepadView = new Notepad(game, uiSkin);
     }
 
-    public Skin initSkin(){
+    public Skin initSkin() {
         Skin skin = new Skin(Gdx.files.internal("skins/skin_pretty/skin.json")); //load ui skin from assets
         return skin;
     }
@@ -107,7 +106,7 @@ public class Journal {
         return stage;
     }
 
-    public void updateMain(){
+    public void updateMain() {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(this.stage);
         switch (this.state){
@@ -145,8 +144,7 @@ public class Journal {
     /**
      * This method disposes of all elements
      */
-    public void dispose()
-    {
+    public void dispose() {
         //Called when disposing the main menu
         stage.dispose();
         this.cluesView.dispose();
@@ -159,8 +157,7 @@ public class Journal {
      * @param width  - The new width
      * @param height - The new height
      */
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
 
         //update the secondary GUI components

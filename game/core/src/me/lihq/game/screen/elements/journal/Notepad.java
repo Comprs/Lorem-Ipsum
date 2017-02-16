@@ -28,7 +28,7 @@ public class Notepad {
         this.stage = this.initNotepad();
     }
 
-    public Stage initNotepad(){
+    public Stage initNotepad() {
         Stage stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         //Create labels
@@ -62,8 +62,7 @@ public class Notepad {
     /**
      * This method disposes of all elements
      */
-    public void dispose()
-    {
+    public void dispose() {
         //stage.dispose();
     }
 
@@ -73,8 +72,7 @@ public class Notepad {
      * @param width  - The new width
      * @param height - The new height
      */
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         //stage.getViewport().update(width, height, true);
     }
 }

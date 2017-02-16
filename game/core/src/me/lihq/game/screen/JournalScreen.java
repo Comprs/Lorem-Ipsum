@@ -36,7 +36,6 @@ public class JournalScreen extends AbstractScreen {
     @Override
     public void show() {
         this.journal.cluesView.updateMain(); //update the clues table
-
     }
 
     @Override

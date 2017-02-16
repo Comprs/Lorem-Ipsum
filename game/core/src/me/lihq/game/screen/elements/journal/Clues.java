@@ -61,7 +61,7 @@ public class Clues {
         return stage;
     }
 
-    public void updateMain(){
+    public void updateMain() {
         //reset the cluesTable and update its contents
         this.cluesTable.reset(); //reset the table
 
@@ -80,8 +80,7 @@ public class Clues {
     /**
      * This method disposes of all elements
      */
-    public void dispose()
-    {
+    public void dispose() {
         this.stage.dispose();
     }
 
@@ -91,8 +90,7 @@ public class Clues {
      * @param width  - The new width
      * @param height - The new height
      */
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         //stage.getViewport().update(width, height, true);
     }
 

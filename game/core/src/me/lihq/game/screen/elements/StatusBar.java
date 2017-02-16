@@ -105,7 +105,6 @@ public class StatusBar
             }
         });
 
-
         stage.addActor(statusBar);
     }
 
