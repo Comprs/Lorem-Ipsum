@@ -65,7 +65,7 @@ public class Menu
     public Menu(final GameMain game, boolean pauseMenu)
     {
         //Initialising new stage
-        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        this.stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
         this.pauseMenu = pauseMenu;
 
@@ -97,41 +97,56 @@ public class Menu
         //Creating the label containing text and determining  its size and location on screen
         Label text;
 
-
-        TextButton newGameButton = new TextButton("", buttonSkin);
-
         if (pauseMenu) {
-            newGameButton.setText("Resume Game");
+            System.out.println("making pause menu");
+            TextButton newResumeButton = new TextButton("Resume", buttonSkin);
             text = new Label("Pause", textStyle);
 
+            //Making the "New Game" button clickable and causing it to start the game
+            newResumeButton.addListener(new ClickListener() {
+                public void clicked(InputEvent event, float x, float y) {
+                    if (pauseMenu) {
+                        System.out.println("Open navigation screen clicked");
+                        game.setScreen(game.navigationScreen);
+                    }
+                }
+            });
+
+            newResumeButton.setPosition(WIDTH, Gdx.graphics.getHeight() / 2);
+
+            this.stage.addActor(newResumeButton);
+
         } else {
+            System.out.println("Making start button");
+            TextButton newStartButton = new TextButton("New game", buttonSkin);
+
             text = new Label("Welcome To the SEPR (Lorem Ipsum) Murder Mystery Game!", textStyle);
-            newGameButton.setText("New Game");
+
+            //Making the "New Game" button clickable and causing it to start the game
+            newStartButton.addListener(new ClickListener() {
+                public void clicked(InputEvent event, float x, float y) {
+                    System.out.println("Open creation screen clicked");
+                    game.setScreen(game.creationScreen);
+                }
+            });
+
+            newStartButton.setPosition(WIDTH, Gdx.graphics.getHeight() / 2);
+
+            this.stage.addActor(newStartButton);
         }
 
         text.setFontScale(2, 2);
 
         text.setBounds(Gdx.graphics.getWidth() / 2 - text.getWidth(), Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 3 + Gdx.graphics.getHeight() / 16, text.getWidth(), text.getHeight());
 
-        newGameButton.setPosition(WIDTH, Gdx.graphics.getHeight() / 2);
 
         TextButton quit = new TextButton("Quit", buttonSkin);
         quit.setPosition(WIDTH, Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 8);
 
         //Loading the buttons onto the stage
         stage.addActor(text);
-        stage.addActor(newGameButton);
         stage.addActor(quit);
 
-        //Making the "New Game" button clickable and causing it to start the game
-        newGameButton.addListener(new ClickListener()
-        {
-            @Override
-            public void clicked(InputEvent event, float x, float y)
-            {
-                game.setScreen(game.navigationScreen);
-            }
-        });
 
         //Making the "Quit" button clickable and causing it to close the game
         quit.addListener(new ClickListener()

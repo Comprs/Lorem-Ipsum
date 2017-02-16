@@ -43,7 +43,7 @@ public class MainMenuScreen extends AbstractScreen
         camera.update();
 
         //Creates a Main Menu object thus creating the main menu
-        menu = new Menu(game, false);
+        this.menu = new Menu(game, false);
     }
 
     /**
