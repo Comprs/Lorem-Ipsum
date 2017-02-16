@@ -46,13 +46,22 @@ public class Journal {
         this.notepadView = new Notepad(game, uiSkin);
     }
 
+    /**
+     * Initialises the skin used across the journal
+     * @return
+     */
     public Skin initSkin() {
         Skin skin = new Skin(Gdx.files.internal("skins/skin_pretty/skin.json")); //load ui skin from assets
         return skin;
     }
 
+    /**
+     * Initialises the Journal GUI elements and places them.
+     * @param uiSkin
+     * @param game
+     * @return
+     */
     public Stage initJournal(Skin uiSkin, GameMain game) {
-
         Stage stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         //create a sprite for the journal background
         Texture journalBackground = new Texture(Gdx.files.internal("Open_journal.png"));
@@ -98,6 +107,7 @@ public class Journal {
             }
         });
 
+        //add actors to the stage
         stage.addActor(cluesButton);
         stage.addActor(journalLabel);
         stage.addActor(notepadButton);
@@ -106,6 +116,9 @@ public class Journal {
         return stage;
     }
 
+    /**
+     * Updates the input processors based on the current state
+     */
     public void updateMain() {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(this.stage);
@@ -122,6 +135,9 @@ public class Journal {
         Gdx.input.setInputProcessor(multiplexer);
     }
 
+    /**
+     * Renders relevant GUI for Journal depending on state.
+     */
     public void renderMain() {
         this.batch.begin();
         this.backgroundImage.draw(this.batch); //draw the journal background

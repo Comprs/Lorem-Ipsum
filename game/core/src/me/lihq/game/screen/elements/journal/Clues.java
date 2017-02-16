@@ -30,14 +30,20 @@ public class Clues {
         this.uiSkin = uiSkin;
     }
 
+    /**
+     * Creates the Clues GUI elements and places them correctly.
+     * @param game
+     * @param uiSkin
+     * @return
+     */
     public Stage initClues(GameMain game, Skin uiSkin) {
+        //generates a new stage
         Stage stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         Label clueLabel = new Label("Clues", uiSkin);
 
         clueLabel.setColor(Color.BLACK);
         clueLabel.setFontScale(1.5f);
-
         clueLabel.setPosition(650, 600);
 
         //create a new table to store clues
@@ -61,10 +67,14 @@ public class Clues {
         return stage;
     }
 
+    /**
+     * Updates the clues table
+     */
     public void updateMain() {
         //reset the cluesTable and update its contents
         this.cluesTable.reset(); //reset the table
 
+        //loops through all clues, adding them to the clues table
         for (Clue clue : this.game.player.collectedClues) {
             Label label = new Label (clue.getName() + " : " + clue.getDescription(), this.uiSkin);
             cluesTable.add(label).width(280f); //set a maximum width on the row of 300 pixels
@@ -72,6 +82,9 @@ public class Clues {
         }
     }
 
+    /**
+     * Renders the Clues GUI elements
+     */
     public void renderMain() {
         this.stage.act();
         this.stage.draw();
@@ -94,6 +107,10 @@ public class Clues {
         //stage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Returns the stage used to hold GUI elements
+     * @return
+     */
     public Stage getStage() {
         return this.stage;
     }

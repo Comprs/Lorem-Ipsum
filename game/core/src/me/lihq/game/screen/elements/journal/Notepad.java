@@ -28,6 +28,10 @@ public class Notepad {
         this.stage = this.initNotepad();
     }
 
+    /**
+     * Initialise the Notepad GUI elements.
+     * @return
+     */
     public Stage initNotepad() {
         Stage stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
@@ -50,11 +54,18 @@ public class Notepad {
         return stage;
     }
 
+    /**
+     * Renders the Notepad GUI elements
+     */
     public void renderMain() {
         this.stage.act();
         this.stage.draw();
     }
 
+    /**
+     * Returns the stage containing all GUI elements
+     * @return
+     */
     public Stage getStage() {
         return stage;
     }
