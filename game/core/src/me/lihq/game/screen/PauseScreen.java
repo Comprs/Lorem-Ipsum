@@ -39,7 +39,7 @@ public class PauseScreen extends AbstractScreen
         camera.update();
 
         //Creates the Pause menu
-        pauseMenu = new Menu(game, true);
+        this.pauseMenu = new Menu(game, true);
     }
 
     /**

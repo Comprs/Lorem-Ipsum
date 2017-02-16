@@ -119,8 +119,6 @@ public class GameMain extends Game
         //Instantiate the FPSLogger to show FPS
         FPS = new FPSLogger();
 
-        this.generateGame(null);
-
         gameLoop();
     }
 

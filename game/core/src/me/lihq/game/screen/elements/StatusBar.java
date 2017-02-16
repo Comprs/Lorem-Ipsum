@@ -66,7 +66,7 @@ public class StatusBar
     {
         this.game = game;
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        pauseScreen = new PauseScreen(game);
+        this.pauseScreen = new PauseScreen(game);
         initSkins();
 
         Table statusBar = new Table();
