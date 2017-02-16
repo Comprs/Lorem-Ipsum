@@ -1,6 +1,3 @@
-/**
- *
- */
 package me.lihq.game.screen.elements;
 
 import java.awt.List;

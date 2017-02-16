@@ -1,6 +1,3 @@
-/**
- *
- */
 package me.lihq.game.screen;
 
 import com.badlogic.gdx.Gdx;
