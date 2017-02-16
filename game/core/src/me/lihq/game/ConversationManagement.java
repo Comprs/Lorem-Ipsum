@@ -97,17 +97,25 @@ public class ConversationManagement
         SpeechBoxButton.EventHandler eventHandler = (result) -> handleResponse(QuestionStage.TYPE, result);
 
         if (!player.collectedClues.isEmpty()) {
+            // We can only ask questions if we have clues to ask about.
             buttons.add(new SpeechBoxButton("Question?", 0, eventHandler));
+        } else {
+            // Tell the player they need clues if they try to question without any clues.
+            speechboxMngr.addSpeechBox(new SpeechBox(
+                "You need to find some clues before you question a suspect", 5
+            ));
         }
-        if (player.collectedClues.size() > 3) {
+
+        if (player.collectedClues.size() >= 4) {
+            // If we have enough clues, we can accuse.
             buttons.add(new SpeechBoxButton("Accuse?", 1, eventHandler));
         }
-        if (buttons.size() > 0) {
-            speechboxMngr.addSpeechBox(new SpeechBox("What do you want to do?", buttons, -1));
-        } else {
-            speechboxMngr.addSpeechBox(new SpeechBox("You need to find some clues before you question a suspect", 5));
-            finishConverstation();
-        }
+
+        // We are always able to ignore the NPC.
+        buttons.add(new SpeechBoxButton("Ignore", 2, eventHandler));
+
+        // Give the player a hint.
+        speechboxMngr.addSpeechBox(new SpeechBox("What do you want to do?", buttons, -1));
     }
 
     /**
@@ -191,10 +199,16 @@ public class ConversationManagement
 
         switch (stage) {
             case TYPE:
-                if (option == 0) {
-                    queryQuestionStyle();
-                } else if (option == 1) {
-                    accuseNPC();
+                switch (option) {
+                    case 0:
+                        queryQuestionStyle();
+                        break;
+                    case 1:
+                        accuseNPC();
+                        break;
+                    case 2:
+                        finishConverstation();
+                        break;
                 }
                 break;
 
