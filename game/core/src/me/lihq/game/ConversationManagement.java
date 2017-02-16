@@ -71,6 +71,17 @@ public class ConversationManagement
 
         //Introduction
         speechboxMngr.addSpeechBox(new SpeechBox(this.player.getName(), this.player.getSpeech("Introduction"), 5));
+
+        // If the NPC has been accused, then we can no longer interact with them. Abort the
+        // conversation early and with the appropriate text.
+        if (this.tempNPC.isAccused()) {
+            speechboxMngr.addSpeechBox(new SpeechBox(
+                "This person is no longer willing to cooperate", 5
+            ));
+            finishConverstation();
+            return;
+        }
+
         speechboxMngr.addSpeechBox(new SpeechBox(this.tempNPC.getName(), this.tempNPC.getSpeech("Introduction"), 5));
 
         queryQuestionType();
@@ -152,6 +163,7 @@ public class ConversationManagement
             speechboxMngr.addSpeechBox(new SpeechBox("You found the killer well done", -1));
             finishConverstation();
         } else {
+            this.tempNPC.accuse();
             speechboxMngr.addSpeechBox(new SpeechBox("They are clearly not the killer, just look at them.", 5));
             finishConverstation();
         }
