@@ -21,6 +21,7 @@ import me.lihq.game.models.Vector2Int;
 import me.lihq.game.people.NPC;
 import me.lihq.game.people.Player;
 import me.lihq.game.screen.AbstractScreen;
+import me.lihq.game.screen.JournalScreen;
 import me.lihq.game.screen.MainMenuScreen;
 import me.lihq.game.screen.NavigationScreen;
 
@@ -71,6 +72,8 @@ public class GameMain extends Game
      */
     private MainMenuScreen menuScreen;
 
+    public JournalScreen journalScreen;
+
     /**
      * This is called at start up. It initialises the game.
      */
@@ -95,6 +98,8 @@ public class GameMain extends Game
 
         navigationScreen = new NavigationScreen(this);
         navigationScreen.updateTiledMapRenderer();
+
+        this.journalScreen = new JournalScreen(this);
 
         //Instantiate the FPSLogger to show FPS
         FPS = new FPSLogger();

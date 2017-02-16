@@ -54,6 +54,9 @@ public class StatusBar
     private Skin buttonSkin;
     private Skin labelSkin;
     private PauseScreen pauseScreen;
+    private Label scoreLabel;
+    private Label personalityLabel;
+    private GameMain game;
 
     /**
      * The initializer for the StatusBar
@@ -61,6 +64,7 @@ public class StatusBar
      */
     public StatusBar(final GameMain game)
     {
+        this.game = game;
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         pauseScreen = new PauseScreen(game);
         initSkins();
@@ -71,23 +75,28 @@ public class StatusBar
         statusBar.row().height(HEIGHT);
         statusBar.defaults().width(WIDTH);
 
-        Label scoreLabel = new Label("Score: 0", labelSkin);
-        scoreLabel.setAlignment(Align.center, Align.center);
+        this.scoreLabel = new Label("", labelSkin);
+        this.scoreLabel.setAlignment(Align.center, Align.center);
         statusBar.add(scoreLabel).uniform();
 
-        TextButton personalityMeter = new TextButton("Personality Meter", buttonSkin);
-        statusBar.add(personalityMeter).uniform();
+        this.personalityLabel = new Label("", labelSkin);
+        this.personalityLabel.setAlignment(Align.center, Align.center);
+        statusBar.add(personalityLabel).uniform();
 
-        TextButton inventoryButton = new TextButton("Inventory", buttonSkin);
+        TextButton inventoryButton = new TextButton("Journal", buttonSkin);
+        inventoryButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(game.journalScreen);
+            }
+        });
         statusBar.add(inventoryButton).uniform();
 
         TextButton pauseButton = new TextButton("Pause", buttonSkin);
         statusBar.add(pauseButton).uniform();
-        pauseButton.addListener(new ClickListener()
-        {
+        pauseButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y)
-            {
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(pauseScreen);
             }
         });
@@ -96,11 +105,18 @@ public class StatusBar
     }
 
     /**
+     * Updates the status bar
+     */
+    public void updateMain() {
+        this.scoreLabel.setText(String.format("Score: %1$d", this.game.player.getScore()));
+        this.personalityLabel.setText(String.format("Personality: %1$d", this.game.player.getPersonalityLevel()));
+    }
+
+    /**
      * Renders the status bar
      * Should be called within the render() method of a screen
      */
-    public void render()
-    {
+    public void renderMain() {
         stage.act();
         stage.draw();
     }

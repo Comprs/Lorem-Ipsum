@@ -105,7 +105,7 @@ public class Menu
             text = new Label("Pause", textStyle);
 
         } else {
-            text = new Label("Welcome To the Lorem Ipsum Murder Mystery Game!", textStyle);
+            text = new Label("Welcome To the SEPR (Lorem Ipsum) Murder Mystery Game!", textStyle);
             newGameButton.setText("New Game");
         }
 
@@ -114,14 +114,12 @@ public class Menu
         text.setBounds(Gdx.graphics.getWidth() / 2 - text.getWidth(), Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 3 + Gdx.graphics.getHeight() / 16, text.getWidth(), text.getHeight());
 
         newGameButton.setPosition(WIDTH, Gdx.graphics.getHeight() / 2);
-        TextButton settings = new TextButton("Settings", buttonSkin);
-        settings.setPosition(WIDTH, Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 8);
+
         TextButton quit = new TextButton("Quit", buttonSkin);
-        quit.setPosition(WIDTH, Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 4);
+        quit.setPosition(WIDTH, Gdx.graphics.getHeight() / 2 - Gdx.graphics.getHeight() / 8);
 
         //Loading the buttons onto the stage
         stage.addActor(text);
-        stage.addActor(settings);
         stage.addActor(newGameButton);
         stage.addActor(quit);
 
@@ -142,15 +140,6 @@ public class Menu
             public void clicked(InputEvent event, float x, float y)
             {
                 Gdx.app.exit();
-            }
-        });
-        //Making the "Settings" button clickable and causing it to load the settings screen
-        settings.addListener(new ClickListener()
-        {
-            @Override
-            public void clicked(InputEvent event, float x, float y)
-            {
-                //Change to settings screen once its been made
             }
         });
     }
@@ -180,7 +169,6 @@ public class Menu
         textButtonStyle.over = buttonSkin.newDrawable("background", Color.LIGHT_GRAY);
         textButtonStyle.font = buttonSkin.getFont("default");
         buttonSkin.add("default", textButtonStyle);
-
     }
 
     /**
