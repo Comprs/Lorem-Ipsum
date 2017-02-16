@@ -19,10 +19,10 @@ import me.lihq.game.models.Clue;
  *
  */
 public class Clues {
-    GameMain game;
-    Table cluesTable;
-    Stage stage;
-    Skin uiSkin;
+    private GameMain game;
+    private Table cluesTable;
+    private Stage stage;
+    private Skin uiSkin;
 
     public Clues(GameMain game, Skin uiSkin) {
         this.game = game;
@@ -65,7 +65,7 @@ public class Clues {
         //reset the cluesTable and update its contents
         this.cluesTable.reset(); //reset the table
 
-        for (Clue clue : this.game.player.collectedClues){
+        for (Clue clue : this.game.player.collectedClues) {
             Label label = new Label (clue.getName() + " : " + clue.getDescription(), this.uiSkin);
             cluesTable.add(label).width(280f); //set a maximum width on the row of 300 pixels
             cluesTable.row(); //end the row

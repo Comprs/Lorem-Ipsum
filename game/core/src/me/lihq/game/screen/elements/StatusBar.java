@@ -84,11 +84,9 @@ public class StatusBar
         statusBar.add(personalityLabel).uniform();
 
         TextButton inventoryButton = new TextButton("Journal", buttonSkin);
-        inventoryButton.addListener(new ClickListener()
-        {
+        inventoryButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y)
-            {
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(game.journalScreen);
             }
         });
@@ -96,11 +94,9 @@ public class StatusBar
 
         TextButton pauseButton = new TextButton("Pause", buttonSkin);
         statusBar.add(pauseButton).uniform();
-        pauseButton.addListener(new ClickListener()
-        {
+        pauseButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y)
-            {
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(pauseScreen);
             }
         });
@@ -111,7 +107,7 @@ public class StatusBar
     /**
      * Updates the status bar
      */
-    public void updateMain(){
+    public void updateMain() {
         this.scoreLabel.setText(String.format("Score: %1$d", this.game.player.getScore()));
         this.personalityLabel.setText(String.format("Personality: %1$d", this.game.player.getPersonalityLevel()));
     }
@@ -120,8 +116,7 @@ public class StatusBar
      * Renders the status bar
      * Should be called within the render() method of a screen
      */
-    public void renderMain()
-    {
+    public void renderMain() {
         stage.act();
         stage.draw();
     }
