@@ -37,6 +37,11 @@ public class NPC extends AbstractPerson
     private boolean isVictim = false;
 
     /**
+     * This indicates whether the NPC has been accused.
+     */
+    private boolean hasBeenAccused = false;
+
+    /**
      * This stores the players personality {@link me.lihq.game.people.AbstractPerson.Personality}
      */
     private Personality personality;
@@ -245,5 +250,19 @@ public class NPC extends AbstractPerson
     public Personality getPersonality()
     {
         return this.personality;
+    }
+
+    /**
+     * Sets the accuse state of the NPC.
+     */
+    public void accuse() {
+        this.hasBeenAccused = true;
+    }
+
+    /**
+     * Get whether the NPC has been accused.
+     */
+    public boolean isAccused() {
+        return this.hasBeenAccused;
     }
 }
