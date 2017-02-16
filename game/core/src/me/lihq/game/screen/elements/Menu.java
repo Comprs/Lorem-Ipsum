@@ -97,7 +97,6 @@ public class Menu
         //Creating the label containing text and determining  its size and location on screen
         Label text;
 
-
         if (pauseMenu) {
             System.out.println("making pause menu");
             TextButton newResumeButton = new TextButton("Resume", buttonSkin);
