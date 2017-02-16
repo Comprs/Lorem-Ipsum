@@ -21,6 +21,7 @@ import me.lihq.game.models.Vector2Int;
 import me.lihq.game.people.NPC;
 import me.lihq.game.people.Player;
 import me.lihq.game.screen.AbstractScreen;
+import me.lihq.game.screen.CharacterCreationScreen;
 import me.lihq.game.screen.JournalScreen;
 import me.lihq.game.screen.MainMenuScreen;
 import me.lihq.game.screen.NavigationScreen;
@@ -70,9 +71,33 @@ public class GameMain extends Game
     /**
      * The main menu screen that shows up when the game is first started
      */
-    private MainMenuScreen menuScreen;
+    public MainMenuScreen menuScreen;
 
+    /**
+     * The Creation Screen that is used to select character traits
+     */
+    public CharacterCreationScreen creationScreen;
+
+    /**
+     * The Journal Screen that is used to display the Journal
+     */
     public JournalScreen journalScreen;
+
+    /**
+     * The generate game screen generates the game. this is triggered by the completion of the CharacterCreationScreen.
+     * An array list of traits is passed in for the generation class to make use of.
+     */
+    public void generateGame(ArrayList<String> traits) {
+        this.gameMap = new Map(); //instantiate game map
+
+        this.initialiseAllPeople();
+
+        initialiseClues();
+
+        //set up the screen and display the first room
+        this.navigationScreen = new NavigationScreen(this);
+        this.navigationScreen.updateTiledMapRenderer();
+    }
 
     /**
      * This is called at start up. It initialises the game.
@@ -84,22 +109,12 @@ public class GameMain extends Game
 
         Assets.load();// Load in the assets the game needs
 
-        gameMap = new Map(); //instantiate game map
-
-        initialiseAllPeople();
-
-        initialiseClues();
-
-        //set up the screen and display the first room
-
         //Set up the Menu
         menuScreen = new MainMenuScreen(this);
         this.setScreen(menuScreen);
 
-        navigationScreen = new NavigationScreen(this);
-        navigationScreen.updateTiledMapRenderer();
-
         this.journalScreen = new JournalScreen(this);
+        this.creationScreen = new CharacterCreationScreen(this);
 
         //Instantiate the FPSLogger to show FPS
         FPS = new FPSLogger();
@@ -116,7 +131,7 @@ public class GameMain extends Game
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        FPS.log();//this is where fps is displayed
+        //FPS.log();//this is where fps is displayed
 
         super.render(); // This calls the render method of the screen that is currently set
 
