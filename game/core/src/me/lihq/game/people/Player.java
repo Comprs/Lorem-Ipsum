@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import me.lihq.game.GameMain;
 import me.lihq.game.Settings;
+import me.lihq.game.ScoreTracker;
 import me.lihq.game.models.Clue;
 import me.lihq.game.models.Room;
 import me.lihq.game.screen.elements.SpeechBox;
@@ -104,7 +105,7 @@ public class Player extends AbstractPerson
     /**
      * This method is called when the player interacts with the map
      */
-    public void interact()
+    public void interact(ScoreTracker scoreTracker)
     {
         if (inConversation) return;
 
@@ -112,7 +113,7 @@ public class Player extends AbstractPerson
         if (npc != null) {
             GameMain.me.getNavigationScreen().convMngt.startConversation(npc);
         } else {
-            checkForClue();
+            checkForClue(scoreTracker);
         }
     }
 
@@ -137,7 +138,7 @@ public class Player extends AbstractPerson
     /**
      * This method checks to see if the tile the player is facing has a clue hidden in it or not
      */
-    private void checkForClue()
+    private void checkForClue(ScoreTracker scoreTracker)
     {
         int x = getTileCoordinates().x + getDirection().getDx();
         int y = getTileCoordinates().y + getDirection().getDy();
@@ -150,6 +151,7 @@ public class Player extends AbstractPerson
         Clue clueFound = getRoom().getClue(x, y);
         if (clueFound != null) {
             GameMain.me.getNavigationScreen().speechboxMngr.addSpeechBox(new SpeechBox("You found: " + clueFound.getDescription(), 6));
+            scoreTracker.addClue();
             this.collectedClues.add(clueFound);
         } else {
             GameMain.me.getNavigationScreen().speechboxMngr.addSpeechBox(new SpeechBox("Sorry no clue here", 1));

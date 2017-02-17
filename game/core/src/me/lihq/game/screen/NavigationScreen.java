@@ -139,7 +139,7 @@ public class NavigationScreen extends AbstractScreen
 
         tiledMapRenderer = new OrthogonalTiledMapRendererWithPeople(game.player.getRoom().getTiledMap());
 
-        playerController = new PlayerController(game.player);
+        playerController = new PlayerController(game.player, game.scoreTracker);
 
         spriteBatch = new SpriteBatch();
 
@@ -147,7 +147,7 @@ public class NavigationScreen extends AbstractScreen
 
         speechboxMngr = new SpeechboxManager();
 
-        convMngt = new ConversationManagement(game.player, speechboxMngr);
+        convMngt = new ConversationManagement(game.player, speechboxMngr, game.scoreTracker);
 
         tiledMapRenderer.addPerson(game.player);
 
