@@ -17,6 +17,12 @@ public class QuestionIntent {
         this.description = description;
     }
 
+    QuestionIntent(ArrayList<Question> questions, String description) {
+        this.questions = questions;
+        this.description = description;
+    }
+
+    void attachResponse(ResponseIntent resp) { this.response = resp; }
 
     String getDescription(){
         return this.description;
