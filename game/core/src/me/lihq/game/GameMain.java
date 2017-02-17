@@ -84,6 +84,11 @@ public class GameMain extends Game
     public JournalScreen journalScreen;
 
     /**
+     * The score tracker.
+     */
+    public ScoreTracker scoreTracker;
+
+    /**
      * The generate game screen generates the game. this is triggered by the completion of the CharacterCreationScreen.
      * An array list of traits is passed in for the generation class to make use of.
      */
@@ -118,6 +123,8 @@ public class GameMain extends Game
 
         //Instantiate the FPSLogger to show FPS
         FPS = new FPSLogger();
+
+        this.scoreTracker = new ScoreTracker();
 
         gameLoop();
     }

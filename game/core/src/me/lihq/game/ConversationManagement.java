@@ -39,18 +39,22 @@ public class ConversationManagement
      */
     private Personality tempQuestionStyle;
 
-    /**
-     * This constructs a converstation manager
-     *
-     * @param player           the player that will initiate the conversation
-     * @param speechboxManager the speechbox manager that is in charge of displaying the converstation
-     */
-    public ConversationManagement(Player player, SpeechboxManager speechboxManager)
-    {
+    // Keep a reference to the score tracker so that we may update the score.
+    private ScoreTracker scoreTracker;
 
+    /**
+     * This constructs a conversation manager.
+     *
+     * @param player The player that will initiate the conversation.
+     * @param speechboxManager The speechbox manager that displays the conversation.
+     * @param scoreTracker The score tracker to update where appropriate.
+     */
+    public ConversationManagement(
+        Player player, SpeechboxManager speechboxManager, ScoreTracker scoreTracker
+    ) {
         this.player = player;
         this.speechboxMngr = speechboxManager;
-
+        this.scoreTracker = scoreTracker;
     }
 
     /**
@@ -159,6 +163,7 @@ public class ConversationManagement
     {
         speechboxMngr.addSpeechBox(new SpeechBox(player.getName(), player.getSpeech(player.collectedClues.get(tempCluePos), tempQuestionStyle), 3));
         speechboxMngr.addSpeechBox(new SpeechBox(tempNPC.getName(), tempNPC.getSpeech(player.collectedClues.get(tempCluePos), tempQuestionStyle), 3));
+        this.scoreTracker.addQuestion();
         finishConverstation();
     }
 
@@ -172,6 +177,7 @@ public class ConversationManagement
             finishConverstation();
         } else {
             this.tempNPC.accuse();
+            this.scoreTracker.addIncorrectAccusation();
             speechboxMngr.addSpeechBox(new SpeechBox("They are clearly not the killer, just look at them.", 5));
             finishConverstation();
         }

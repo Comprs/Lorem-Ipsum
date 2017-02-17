@@ -2,6 +2,7 @@ package me.lihq.game.people.controller;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import me.lihq.game.ScoreTracker;
 import me.lihq.game.Settings;
 import me.lihq.game.people.Player;
 
@@ -28,14 +29,18 @@ public class PlayerController extends InputAdapter
      */
     private Player player;
 
+    // A reference to the score tracker.
+    private ScoreTracker scoreTracker;
+
     /**
      * Constructor to create the PlayerController to control the provided Player
      *
-     * @param player - The player that we want this controller to control
+     * @param player The player that we want this controller to control.
+     * @param scoreTracker The score tracker to reference.
      */
-    public PlayerController(Player player)
-    {
+    public PlayerController(Player player, ScoreTracker scoreTracker) {
         this.player = player;
+        this.scoreTracker = scoreTracker;
     }
 
     /**
@@ -48,7 +53,7 @@ public class PlayerController extends InputAdapter
     public boolean keyDown(int keycode)
     {
         if (keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {
-            player.interact();
+            player.interact(this.scoreTracker);
             return true;
         }
 
