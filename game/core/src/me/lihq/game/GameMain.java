@@ -277,8 +277,8 @@ public class GameMain extends Game
     /**
      * This method returns a list of the NPCs that are in the specified room
      *
-     * @param room - The room to check
-     * @return (List<NPC>) The NPCs that are in the specified room
+     * @param room The room to check.
+     * @return The NPCs that are in the specified room.
      */
     public List<NPC> getNPCS(Room room)
     {

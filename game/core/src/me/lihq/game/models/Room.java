@@ -394,9 +394,10 @@ public class Room
     }
 
     /**
-     * This will check the map for any potential hiding locations, and returns them as a list of coordinates
+     * This will check the map for any potential hiding locations, and returns them as a list of
+     * coordinates.
      *
-     * @return (List<Vector2Int>) list of coordinates of the hideable tiles
+     * @return List of coordinates of the possible tiles.
      */
     public List<Vector2Int> getHidingSpots()
     {

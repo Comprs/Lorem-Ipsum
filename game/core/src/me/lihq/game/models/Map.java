@@ -135,9 +135,9 @@ public class Map
 
 
     /**
-     * Gets the rooms in the map
+     * Gets the rooms in the map.
      *
-     * @return (List<Room>) List of rooms that the map initialised
+     * @return List of rooms in the map.
      */
     public List<Room> getRooms()
     {
