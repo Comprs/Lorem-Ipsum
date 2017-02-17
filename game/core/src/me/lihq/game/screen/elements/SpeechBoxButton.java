@@ -35,17 +35,20 @@ public class SpeechBoxButton
     }
 
     /**
-     * Event handler interface
-     * Used for defining the click event handler on a SpeechBoxButton
+     * An interface for use when adding a click event handler to the button.
      * <p>
      * Initialising an event handler:
-     * SpeechBoxButton.EventHandler eventHandler = (String name) -> {
-     * System.out.println(name + " was pressed");
-     * };
+     * </p>
+     * <pre>
+     * SpeechBoxButton.EventHandler eventHandler = (String name) -&gt; {
+     *     System.out.println(name + " was pressed");
+     * };</pre>
      * <p>
      * Usage:
      * Used in SpeechBox class on button click
-     * SpeechBoxButton.eventHandler.trigger();
+     * </p>
+     * <pre>
+     * SpeechBoxButton.eventHandler.trigger();</pre>
      */
     public interface EventHandler
     {

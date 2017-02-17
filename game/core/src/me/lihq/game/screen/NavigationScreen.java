@@ -383,7 +383,7 @@ public class NavigationScreen extends AbstractScreen
     /**
      * This method gets the list of current NPCs in the current room
      *
-     * @return (List<NPC>) the value of currentNPCs {@link #currentNPCS}
+     * @return The list of NPCs in this room.
      */
     public List<NPC> getNPCs()
     {

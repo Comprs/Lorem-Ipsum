@@ -376,10 +376,12 @@ public abstract class AbstractPerson extends Sprite
 
     /**
      * This is used to describe the direction the person is currently facing or moving in.
+     * <ul>
      * <li>{@link #NORTH}</li>
      * <li>{@link #SOUTH}</li>
      * <li>{@link #EAST}</li>
      * <li>{@link #WEST}</li>
+     * </ul>
      */
     public enum Direction
     {
@@ -453,8 +455,10 @@ public abstract class AbstractPerson extends Sprite
 
     /**
      * The state of the person explains what they are currently doing.
+     * <ul>
      * <li>{@link #WALKING}</li>
      * <li>{@link #STANDING}</li>
+     * </ul>
      */
     public enum PersonState
     {
@@ -487,13 +491,6 @@ public abstract class AbstractPerson extends Sprite
      */
     public static class PersonPositionComparator implements Comparator<AbstractPerson>
     {
-        /**
-         * This method compares the 2 objects.
-         *
-         * @param o1 - The first object to compare
-         * @param o2 - The second object to compare
-         * @return (int) if <0 o1 is considered to be first in the list
-         */
         @Override
         public int compare(AbstractPerson o1, AbstractPerson o2)
         {
