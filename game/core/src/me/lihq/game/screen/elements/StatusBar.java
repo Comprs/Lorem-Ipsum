@@ -108,7 +108,7 @@ public class StatusBar
      * Updates the status bar
      */
     public void updateMain() {
-        this.scoreLabel.setText(String.format("Score: %1$d", this.game.player.getScore()));
+        this.scoreLabel.setText(String.format("Score: %1$d", 0));
         this.personalityLabel.setText(String.format("Personality: %1$d", this.game.player.getPersonalityLevel()));
     }
 

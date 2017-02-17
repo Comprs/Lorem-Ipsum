@@ -28,10 +28,6 @@ public class Player extends AbstractPerson
      * The personality will be a percent score (0-100) 0 being angry, 50 being neutral, and 100 being happy/nice.
      */
     private int personalityLevel = 50;
-    /**
-     * The score the player has earned so far.
-     */
-    private int score = 0;
 
     /**
      * This is the constructor for player, it creates a new playable person
@@ -241,13 +237,5 @@ public class Player extends AbstractPerson
         } else {
             return jsonData.get("Responses").get(key).getString(style.toString());
         }
-    }
-
-    /**
-     * This method returns the current score of the player
-     * @return (Int) - returns the score
-     */
-    public int getScore() {
-        return score;
     }
 }
