@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import me.lihq.game.models.Clue;
 import me.lihq.game.models.Dialogue.Question;
+import me.lihq.game.models.Dialogue.QuestionIntent;
 import me.lihq.game.models.Dialogue.ResponseIntent;
 import org.sqlite.JDBC;
 
@@ -17,6 +19,8 @@ import org.sqlite.JDBC;
  * Created by LJ on 17/02/2017.
  * A single class that loads data from an sqlite3 database, along with metadata required for the generation
  * of the scenario but not the game itself.
+ *The load functions are concerned with loading in the correct data from tables
+ * while the build functions are used to manage the randomness
  */
 public class ScenarioDatabase {
     public enum Classes {
@@ -26,7 +30,8 @@ public class ScenarioDatabase {
         ANTIGOOSE,
         PICKYEATER,
         CRAPPYBARISTA,
-        ANGRYLIBRARIAN
+        ANGRYLIBRARIAN,
+        TBA
     }
 
     public class DataCharacter{
@@ -52,18 +57,22 @@ public class ScenarioDatabase {
 
     public class DataResponseIntent {
         int id;
+        Clue clue;
         List<String> responses = new ArrayList<>();
     }
 
     public class DataClue {
         int id;
         String name;
+        String description;
         List<Classes> classes = new ArrayList<>();
         int storyNode;
         boolean isAbstract;
     }
 
+
     public HashMap<Classes, List<Classes>> murderVictimRelations;
+    public HashMap<Integer, List<Integer>> questionToResponses;
     public HashMap<Integer, DataCharacter> characters;
     public HashMap<Integer, DataQuestion> questions;
     public HashMap<Integer, DataQuestionIntent> questionIntents;
@@ -71,8 +80,8 @@ public class ScenarioDatabase {
     public HashMap<Integer, DataClue> clues;
 
     public ScenarioDatabase() {
-
         murderVictimRelations = new HashMap<>();
+        questionToResponses = new HashMap<>();
         characters = new HashMap<>();
         questions = new HashMap<>();
         questionIntents = new HashMap<>();
@@ -90,16 +99,14 @@ public class ScenarioDatabase {
             //choosing our murderer class from the set of classes, then
             //a random victim class from the classes present in the relation
             //must take care to ensure things are truly random.
-
             int randomNum = ranGen.nextInt(Classes.values().length - 1);
             Classes murderClass = Classes.values()[randomNum];
             List<Classes> victimSet = this.murderVictimRelations.get(murderClass);
             Classes victimClass = victimSet.get(ranGen.nextInt(victimSet.size() - 1));
-            List<DataCharacter> murdererAndVictim = this.chooseMurdererVictim(ranGen, murderClass, victimClass);
-            murdererAndVictim.get(0).isMurderer = true;
-            murdererAndVictim.get(1).isVictim = true;
 
+            this.chooseMurdererVictim(ranGen, murderClass, victimClass);
             this.loadClue(sqlConn, murderClass, victimClass);
+
 
 
         } catch (SQLException e) {
@@ -136,15 +143,7 @@ public class ScenarioDatabase {
         }
     }
 
-    /**
-     *
-     * @param ranGen
-     * @param mClass
-     * @param vClass
-     * @return arraylist whose first value is the chosen murderer, and second value is the chosen victim. we are playin' god.
-     */
-    private List<DataCharacter> chooseMurdererVictim(Random ranGen, Classes mClass, Classes vClass) {
-        List<DataCharacter> murdererAndVictim = new ArrayList<>();
+    private void chooseMurdererVictim(Random ranGen, Classes mClass, Classes vClass) {
         List<DataCharacter> tempM = new ArrayList<>();
         List<DataCharacter> tempV = new ArrayList<>();
         for (DataCharacter c : this.characters.values()) {
@@ -157,9 +156,8 @@ public class ScenarioDatabase {
                 }
             }
         }
-        murdererAndVictim.add(tempM.get(ranGen.nextInt(tempM.size() - 1)));
-        murdererAndVictim.add(tempV.get(ranGen.nextInt(tempV.size() - 1)));
-        return murdererAndVictim;
+        tempM.get(ranGen.nextInt(tempM.size() - 1)).isMurderer = true;
+        tempV.get(ranGen.nextInt(tempV.size() - 1)).isVictim = true;
     }
 
     private void loadRelations(Connection conn) {
@@ -174,6 +172,22 @@ public class ScenarioDatabase {
                 this.murderVictimRelations.put(Classes.values()[counter], classesTemp);
             }
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadQuestionToResponse(Connection conn) {
+        try (Statement stmt = conn.createStatement()) {
+            ResultSet resSet = stmt.executeQuery("SELECT * from QuestionToResponse");
+            while(resSet.next()) {
+                List<Integer> tmp = new ArrayList<>();
+                for (int counter = 0; counter < 9; counter++) {
+                    tmp.add(resSet.getInt("responseIntent" + Integer.toString(counter)));
+                    //handle arraylist exceptions
+                }
+                this.questionToResponses.put(resSet.getInt("id"), tmp);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -203,12 +217,9 @@ public class ScenarioDatabase {
                 DataQuestionIntent questionIntent = new DataQuestionIntent();
                 questionIntent.id = resSet.getInt("id");
                 List<DataQuestion> dQs = new ArrayList<>();
-                dQs.add(this.questions.get(resSet.getInt("question0")));
-                dQs.add(this.questions.get(resSet.getInt("question1")));
-                dQs.add(this.questions.get(resSet.getInt("question2")));
-                dQs.add(this.questions.get(resSet.getInt("question3")));
-                dQs.add(this.questions.get(resSet.getInt("question4")));
-
+                for (int counter = 0; counter < 5; counter++) {
+                    dQs.add(this.questions.get(resSet.getInt("question" + Integer.toString(counter))));
+                }
                 for (DataQuestion dQ: dQs) {
                     questionIntent.questions.add(new Question(dQ.style, dQ.questionText));
                 }
@@ -220,11 +231,24 @@ public class ScenarioDatabase {
         }
     }
 
+    //loads in only the necessary data: i.e. the questionIntent is used to determine tree structure and is not loaded
     private void loadResponseIntent(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
-            ResultSet resSet = stmt.executeQuery("SELECT * from questions");
+            ResultSet resSet = stmt.executeQuery("SELECT * from ResponseIntent");
             while (resSet.next()) {
+                DataResponseIntent responseIntent = new DataResponseIntent();
+                responseIntent.id = resSet.getInt("id");
+                try {
+                    DataClue tmpDataClue = this.clues.get(resSet.getInt("clue"));
+                    responseIntent.clue = new Clue(tmpDataClue.name, tmpDataClue.description);
+                } catch (SQLException e) {
+                    //no clue present for this responseintent in the database
+                }
+                for (int counter = 0; counter < 3; counter++) {
+                    responseIntent.responses.add(resSet.getString("response" + Integer.toString(counter)));
+                }
 
+                this.responseIntents.put(responseIntent.id, responseIntent);
             }
 
         } catch (SQLException e) {
@@ -233,7 +257,6 @@ public class ScenarioDatabase {
 
 
     }
-
 
     private void loadClue(Connection conn, Classes mClass, Classes vClass) {
         try (Statement stmt = conn.createStatement()) {
@@ -244,6 +267,7 @@ public class ScenarioDatabase {
                 if (clue.classes.contains(mClass) || clue.classes.contains(vClass)) {
                     clue.id = resSet.getInt("id");
                     clue.name = resSet.getString("name");
+                    clue.description = resSet.getString("description");
                     clue.storyNode = resSet.getInt("story");
                     clue.isAbstract = resSet.getBoolean("isAbstract");
 

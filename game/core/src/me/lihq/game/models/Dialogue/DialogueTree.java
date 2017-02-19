@@ -16,8 +16,11 @@ import java.util.HashMap;
  *
  * @author Jacob Wunwin
  */
+
+
+//TODO initialise with a set of default questionIntents that are common across all trees and characters.
 public class DialogueTree {
-    private HashMap<Style, Personality> mapStylePersonality = new HashMap<Style, Personality>();
+    private HashMap<Style, Personality> mapStylePersonality = new HashMap<>();
     private Personality personality;
     ArrayList<QuestionIntent> questions;
 
