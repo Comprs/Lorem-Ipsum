@@ -45,8 +45,4 @@ public class ResponseIntent {
     boolean isDead(){
         return this.isDead;
     }
-
-
-
-
 }

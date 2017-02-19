@@ -23,5 +23,4 @@ public class Question {
     Style getStyle() {
         return this.style;
     }
-
 }
