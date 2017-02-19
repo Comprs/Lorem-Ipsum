@@ -107,7 +107,9 @@ public class WonGame
         text.setBounds(x1, y1a + y1b, text.getWidth(), text.getHeight());
 
         String finalScore;
-        finalScore = String.format("\nFinal Score: \n\n %1$d", 10);
+        finalScore = String.format("\nFinal Score: \n\n %1$d", game.scoreTracker.collectScore((x, y, z, i) -> {
+            return -y + z + i;
+        }));
         score = new Label(finalScore, textStyle);
         score.setAlignment(1, 1);
         score.setFontScale(2, 2);
