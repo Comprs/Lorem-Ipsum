@@ -25,6 +25,7 @@ import me.lihq.game.screen.CharacterCreationScreen;
 import me.lihq.game.screen.JournalScreen;
 import me.lihq.game.screen.MainMenuScreen;
 import me.lihq.game.screen.NavigationScreen;
+import me.lihq.game.screen.WonGameScreen;
 
 import java.util.*;
 
@@ -79,6 +80,11 @@ public class GameMain extends Game
     public CharacterCreationScreen creationScreen;
 
     /**
+     * The Screen that is displayed when the player wins the game
+     */
+    public WonGameScreen wonGameScreen;
+
+    /**
      * The Journal Screen that is used to display the Journal
      */
     public JournalScreen journalScreen;
@@ -102,6 +108,7 @@ public class GameMain extends Game
         //set up the screen and display the first room
         this.navigationScreen = new NavigationScreen(this);
         this.navigationScreen.updateTiledMapRenderer();
+
     }
 
     /**
@@ -116,10 +123,10 @@ public class GameMain extends Game
 
         //Set up the Menu
         menuScreen = new MainMenuScreen(this);
-        this.setScreen(menuScreen);
-
         this.journalScreen = new JournalScreen(this);
         this.creationScreen = new CharacterCreationScreen(this);
+        this.wonGameScreen = new WonGameScreen(this);
+        this.setScreen(menuScreen);
 
         //Instantiate the FPSLogger to show FPS
         FPS = new FPSLogger();
