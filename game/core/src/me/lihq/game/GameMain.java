@@ -126,6 +126,7 @@ public class GameMain extends Game
         this.journalScreen = new JournalScreen(this);
         this.creationScreen = new CharacterCreationScreen(this);
         this.wonGameScreen = new WonGameScreen(this);
+
         this.setScreen(menuScreen);
 
         //Instantiate the FPSLogger to show FPS

@@ -69,9 +69,15 @@ public class CharacterGeneration {
 
         //Create buttons and labels
         Label titleLable = new Label ("Make your Character", this.uiSkin);
-        titleLable.setPosition(220, 600);
+        titleLable.setPosition(200, 600);
         titleLable.setColor(Color.BLACK);
         titleLable.setFontScale(1.5f);
+
+        //Create buttons and labels
+        Label instructionLabel = new Label ("Choose 3 character traits:", this.uiSkin);
+        instructionLabel.setPosition(220, 520);
+        instructionLabel.setColor(Color.BLACK);
+        instructionLabel.setFontScale(1f);
 
         final TextButton finishButton = new TextButton("Build My Character", uiSkin);
         finishButton.setPosition(650, 150);
@@ -79,23 +85,23 @@ public class CharacterGeneration {
         ArrayList<CheckBox> tempCheckBoxes = new ArrayList<CheckBox>();
 
         final CheckBox checkBoxAggressive = new CheckBox("Aggressive", this.uiSkin);
-        checkBoxAggressive.setPosition(250, 500);
+        checkBoxAggressive.setPosition(250, 450);
         tempCheckBoxes.add(checkBoxAggressive);
 
         final CheckBox checkBoxPlacating = new CheckBox("Placating", this.uiSkin);
-        checkBoxPlacating.setPosition(250, 450);
+        checkBoxPlacating.setPosition(250, 400);
         tempCheckBoxes.add(checkBoxPlacating);
 
         final CheckBox checkBoxConversational = new CheckBox("Conversational", this.uiSkin);
-        checkBoxConversational.setPosition(250, 400);
+        checkBoxConversational.setPosition(250, 350);
         tempCheckBoxes.add(checkBoxConversational);
 
         final CheckBox checkBoxDirect = new CheckBox("Direct", this.uiSkin);
-        checkBoxDirect.setPosition(250, 350);
+        checkBoxDirect.setPosition(250, 300);
         tempCheckBoxes.add(checkBoxDirect);
 
         final CheckBox checkBoxGnP = new CheckBox("Grunts and Points", this.uiSkin);
-        checkBoxGnP.setPosition(250, 300);
+        checkBoxGnP.setPosition(250, 250);
         tempCheckBoxes.add(checkBoxGnP);
 
         for (CheckBox checkBox : tempCheckBoxes){
@@ -129,6 +135,7 @@ public class CharacterGeneration {
 
         //add actors to the stage
         stage.addActor(titleLable);
+        stage.addActor(instructionLabel);
         stage.addActor(finishButton);
 
         return stage;
