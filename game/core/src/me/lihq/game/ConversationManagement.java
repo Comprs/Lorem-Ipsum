@@ -160,8 +160,9 @@ public class ConversationManagement
     private void accuseNPC()
     {
         if (this.tempNPC.isKiller()) {
-            speechboxMngr.addSpeechBox(new SpeechBox("You found the killer well done", -1));
+            speechboxMngr.addSpeechBox(new SpeechBox("You found the killer - well done!", -1));
             finishConverstation();
+            GameMain.me.setScreen(GameMain.me.wonGameScreen);
         } else {
             this.tempNPC.accuse();
             speechboxMngr.addSpeechBox(new SpeechBox("They are clearly not the killer, just look at them.", 5));
