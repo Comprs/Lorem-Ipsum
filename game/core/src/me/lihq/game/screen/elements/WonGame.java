@@ -100,15 +100,21 @@ public class WonGame
 
         text = new Label("Well Done! You won the Game!", textStyle);
         text.setFontScale(2, 2);
-        text.setBounds(Gdx.graphics.getWidth() / 2 - text.getWidth(), Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 3 + Gdx.graphics.getHeight() / 16, text.getWidth(), text.getHeight());
+
+        float x1 = Gdx.graphics.getWidth() / 2 - text.getWidth();
+        float y1a = Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 3;
+        float y1b = Gdx.graphics.getHeight() / 16;
+        text.setBounds(x1, y1a + y1b, text.getWidth(), text.getHeight());
 
         String finalScore;
         finalScore = String.format("\nFinal Score: \n\n %1$d", 10);
         score = new Label(finalScore, textStyle);
         score.setAlignment(1, 1);
         score.setFontScale(2, 2);
-        score.setBounds(Gdx.graphics.getWidth() / 2 - score.getWidth() / 2, Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 4, score.getWidth(), score.getHeight());
 
+        x1 = Gdx.graphics.getWidth() / 2 - score.getWidth() / 2;
+        y1a = Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 4;
+        score.setBounds(x1, y1a, score.getWidth(), score.getHeight());
 
         //Making the "New Game" button clickable and causing it to start the game
         newStartButton.addListener(new ClickListener() {
