@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import me.lihq.game.GameMain;
 import me.lihq.game.models.Dialogue.Question.Style;
 import java.util.HashMap;
-
-
+import java.util.List;
+import java.util.Random;
 
 /**
  * Holds questionintents for a character and has convenience methods to navigate the resulting tree.
@@ -17,28 +17,28 @@ import java.util.HashMap;
  * @author Jacob Wunwin
  */
 
-
-//TODO initialise with a set of default questionIntents that are common across all trees and characters.
 public class DialogueTree {
-    private HashMap<Style, Personality> mapStylePersonality = new HashMap<>();
-    private Personality personality;
+    private HashMap<Style, Mood> mapStyleMood = new HashMap<>();
+    private Mood mood;
+    private boolean hasBeenWrong = false;
     ArrayList<QuestionIntent> questions;
 
-    enum Personality {
-        AGGRESSIVE, ANXIOUS, UPBEAT, SAD, CAVEMAN
+    public enum Mood {
+        NERVOUS,
+        RELAXED,
+        AGGRESSIVE
     }
 
     /**
      * Initializer function.
      */
-    public DialogueTree(ArrayList<QuestionIntent> questions, Personality personality){
+    public DialogueTree(ArrayList<QuestionIntent> questions, Mood startMood, List<Style> style){
         this.questions = questions;
-        this.personality = personality;
-        mapStylePersonality.put(Style.AGGRESSIVE, Personality.ANXIOUS);
-        mapStylePersonality.put(Style.CONVERSATIONAL, Personality.AGGRESSIVE);
-        mapStylePersonality.put(Style.DIRECT, Personality.UPBEAT);
-        mapStylePersonality.put(Style.PLACATING, Personality.SAD);
-        mapStylePersonality.put(Style.GRUNTSANDPOINTS, Personality.CAVEMAN);
+        this.mood = startMood;
+        for (int counter = 0; counter < 3; counter++) {
+            this.mapStyleMood.put(style.get(counter), Mood.values()[counter]);
+        }
+
     }
 
     /**
@@ -54,7 +54,7 @@ public class DialogueTree {
      * @return
      */
     ArrayList<String> getAvailableIntentsAsString(){
-        ArrayList<String> intents = new ArrayList<String>();
+        ArrayList<String> intents = new ArrayList<>();
         for (QuestionIntent questionIntent : this.questions){
             intents.add(questionIntent.getDescription());
         }
@@ -71,7 +71,7 @@ public class DialogueTree {
      * @return
      */
     ArrayList<String> getAvailableStyles(int intentSelection){
-        ArrayList<String> styledQuestions = new ArrayList<String>();
+        ArrayList<String> styledQuestions = new ArrayList<>();
         for (Question styledQuestion : this.questions.get(intentSelection).getStyleChoices()){
             styledQuestions.add(styledQuestion.getStyle().name() + " : " + styledQuestion.getQuestionText());
         }
@@ -86,24 +86,28 @@ public class DialogueTree {
      * and a clue is yielded, otherwise a bad response and no progressing is given.
      * @return
      */
-    String selectStyledQuestion(int intentSelection, int styleSelection){
+    String selectStyledQuestion(int intentSelection, int styleSelection, GameMain gameMain){
         ResponseIntent respInt = this.questions.get(intentSelection).getResponseIntent();
         Style style = this.questions.get(intentSelection).getStyleChoices().get(styleSelection).getStyle();
         this.questions.remove(intentSelection);
 
-        if (this.mapStylePersonality.get(style) == this.personality) {
+        if (this.mapStyleMood.get(style) == this.mood) {
             if(!respInt.isDead()){
                 this.questions.add(respInt.getQuestionIntent());
             }
-            GameMain.me.player.collectedClues.add(respInt.getClue());
+            gameMain.player.collectedClues.add(respInt.getClue());
             //add the clues to the player.collected clues.
             return respInt.getCorrectResponse();
         }
         else {
-            return respInt.responses.get(this.personality.ordinal());
+            Random rGen = new Random();
+            if (this.hasBeenWrong) {
+                this.mood = Mood.values()[rGen.nextInt(3)];
+                this.hasBeenWrong = false;
+            } else {
+                this.hasBeenWrong = true;
+            }
+            return respInt.responses.get(this.mood.ordinal());
         }
     }
-
-
-
 }

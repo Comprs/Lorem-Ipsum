@@ -7,12 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import me.lihq.game.models.Clue;
-import me.lihq.game.models.Dialogue.Question;
-import me.lihq.game.models.Dialogue.QuestionIntent;
-import me.lihq.game.models.Dialogue.ResponseIntent;
-import org.sqlite.JDBC;
-
-
+import me.lihq.game.models.Dialogue.*;
 
 
 /**
@@ -50,27 +45,37 @@ public class ScenarioDatabase {
 
     public class DataQuestionIntent {
         int id;
+        String description;
         List<Question> questions = new ArrayList<>();
-        ResponseIntent resp;
-
     }
 
     public class DataResponseIntent {
         int id;
         Clue clue;
+        boolean isDead;
         List<String> responses = new ArrayList<>();
+        String correctResponse;
     }
 
     public class DataClue {
         int id;
         String name;
         String description;
+        String inDialogue;
         List<Classes> classes = new ArrayList<>();
         int storyNode;
         boolean isAbstract;
     }
 
+    public class DataDialogueTree {
+        List<Classes> classes;
+        //sets of questionIntents and ResponseIntents at each "layer" of the tree
+        List<List<DataQuestionIntent>> questionLayers = new ArrayList<>();
+        List<List<DataResponseIntent>> responseLayers = new ArrayList<>();
+    }
 
+    public DataCharacter murderer;
+    public DataCharacter victim;
     public HashMap<Classes, List<Classes>> murderVictimRelations;
     public HashMap<Integer, List<Integer>> questionToResponses;
     public HashMap<Integer, DataCharacter> characters;
@@ -78,18 +83,23 @@ public class ScenarioDatabase {
     public HashMap<Integer, DataQuestionIntent> questionIntents;
     public HashMap<Integer, DataResponseIntent> responseIntents;
     public HashMap<Integer, DataClue> clues;
+    public Clue murderWeaponClue;
+    public List<DataDialogueTree> DataDialogueTrees;
 
     public ScenarioDatabase() {
-        murderVictimRelations = new HashMap<>();
-        questionToResponses = new HashMap<>();
-        characters = new HashMap<>();
-        questions = new HashMap<>();
-        questionIntents = new HashMap<>();
-        responseIntents = new HashMap<>();
-        clues = new HashMap<>();
+        this.murderVictimRelations = new HashMap<>();
+        this.questionToResponses = new HashMap<>();
+        this.characters = new HashMap<>();
+        this.questions = new HashMap<>();
+        this.questionIntents = new HashMap<>();
+        this.responseIntents = new HashMap<>();
+        this.clues = new HashMap<>();
+        this.DataDialogueTrees = new ArrayList<>();
+
+
     }
 
-    public ScenarioDatabase(String dbName) {
+    public ScenarioDatabase(String dbName, List<String> traits) {
         this();
         Random ranGen = new Random();
         try (Connection sqlConn = DriverManager.getConnection("jdbc:sqlite" + dbName)) {
@@ -99,14 +109,20 @@ public class ScenarioDatabase {
             //choosing our murderer class from the set of classes, then
             //a random victim class from the classes present in the relation
             //must take care to ensure things are truly random.
-            int randomNum = ranGen.nextInt(Classes.values().length - 1);
+            int randomNum = ranGen.nextInt(Classes.values().length);
             Classes murderClass = Classes.values()[randomNum];
             List<Classes> victimSet = this.murderVictimRelations.get(murderClass);
-            Classes victimClass = victimSet.get(ranGen.nextInt(victimSet.size() - 1));
+            Classes victimClass = victimSet.get(ranGen.nextInt(victimSet.size()));
 
             this.chooseMurdererVictim(ranGen, murderClass, victimClass);
             this.loadClue(sqlConn, murderClass, victimClass);
+            this.loadWeapon(sqlConn, murderClass);
 
+            this.loadQuestion(sqlConn);
+            this.trimQuestions(traits);
+            this.loadQuestionIntent(sqlConn);
+            this.loadQuestionToResponse(sqlConn);
+            this.loadResponseIntent(sqlConn);
 
 
         } catch (SQLException e) {
@@ -156,8 +172,10 @@ public class ScenarioDatabase {
                 }
             }
         }
-        tempM.get(ranGen.nextInt(tempM.size() - 1)).isMurderer = true;
-        tempV.get(ranGen.nextInt(tempV.size() - 1)).isVictim = true;
+        this.murderer = tempM.get(ranGen.nextInt(tempM.size()));
+        this.murderer.isMurderer = true;
+        this.victim = tempV.get(ranGen.nextInt(tempV.size()));
+        this.victim.isVictim = true;
     }
 
     private void loadRelations(Connection conn) {
@@ -183,8 +201,9 @@ public class ScenarioDatabase {
             while(resSet.next()) {
                 List<Integer> tmp = new ArrayList<>();
                 for (int counter = 0; counter < 9; counter++) {
-                    tmp.add(resSet.getInt("responseIntent" + Integer.toString(counter)));
-                    //handle arraylist exceptions
+                    int tmpVal = resSet.getInt("responseIntent" + Integer.toString(counter));
+                    if(!resSet.wasNull())
+                    tmp.add(tmpVal);
                 }
                 this.questionToResponses.put(resSet.getInt("id"), tmp);
             }
@@ -216,9 +235,13 @@ public class ScenarioDatabase {
             while (resSet.next()) {
                 DataQuestionIntent questionIntent = new DataQuestionIntent();
                 questionIntent.id = resSet.getInt("id");
+                questionIntent.description = resSet.getString("description");
                 List<DataQuestion> dQs = new ArrayList<>();
                 for (int counter = 0; counter < 5; counter++) {
-                    dQs.add(this.questions.get(resSet.getInt("question" + Integer.toString(counter))));
+                    DataQuestion tmpDQ = this.questions.get(resSet.getInt("question" + Integer.toString(counter)));
+                    if (tmpDQ != null) {
+                        dQs.add(tmpDQ);
+                    }
                 }
                 for (DataQuestion dQ: dQs) {
                     questionIntent.questions.add(new Question(dQ.style, dQ.questionText));
@@ -238,24 +261,30 @@ public class ScenarioDatabase {
             while (resSet.next()) {
                 DataResponseIntent responseIntent = new DataResponseIntent();
                 responseIntent.id = resSet.getInt("id");
-                try {
-                    DataClue tmpDataClue = this.clues.get(resSet.getInt("clue"));
-                    responseIntent.clue = new Clue(tmpDataClue.name, tmpDataClue.description);
-                } catch (SQLException e) {
-                    //no clue present for this responseintent in the database
-                }
-                for (int counter = 0; counter < 3; counter++) {
+                responseIntent.isDead = resSet.getBoolean("isDead");
+                responseIntent.correctResponse = resSet.getString("response0");
+                for (int counter = 1; counter < 3; counter++) {
                     responseIntent.responses.add(resSet.getString("response" + Integer.toString(counter)));
                 }
 
+
+                int tmpClueID = resSet.getInt("clue");
+                if (!resSet.wasNull()) {
+                    DataClue tmpDataClue = this.clues.get(tmpClueID);
+                    for (Classes c: tmpDataClue.classes) {
+                        for (Classes mClass: this.murderer.classes) {
+                            if(c == mClass) {
+                                responseIntent.clue = new Clue(tmpDataClue.name, tmpDataClue.description);
+                            }
+                        }
+                    }
+
+                }
                 this.responseIntents.put(responseIntent.id, responseIntent);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void loadClue(Connection conn, Classes mClass, Classes vClass) {
@@ -270,12 +299,66 @@ public class ScenarioDatabase {
                     clue.description = resSet.getString("description");
                     clue.storyNode = resSet.getInt("story");
                     clue.isAbstract = resSet.getBoolean("isAbstract");
+                    clue.inDialogue = resSet.getString("inDialogue");
 
                     this.clues.put(clue.id, clue);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadWeapon(Connection conn, Classes mClass) {
+        try (Statement stmt = conn.createStatement()) {
+            int mClassID = mClass.ordinal();
+            ResultSet resSet = stmt.executeQuery("SELECT * from Weapons WHERE classID = " +
+                    Integer.toString(mClassID));
+            Clue mClue = new Clue(resSet.getString("name"), resSet.getString("description"));
+            this.murderWeaponClue = mClue;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //removes questions that don't have the style chosen by the player from the set of questions
+    private void trimQuestions(List<String> traits) {
+        for (DataQuestion q: this.questions.values()) {
+            for (String trait: traits) {
+                if (!trait.equalsIgnoreCase(q.style.name())) {
+                    this.questions.remove(q.id);
+                }
+            }
+        }
+    }
+
+    private void generateTrees() {
+        Random ran = new Random();
+        //creating the initial intents for all trees
+        for(int treeIndex = 0; treeIndex < 10; treeIndex++) {
+            List<DataQuestionIntent> tmpQuestionIntents = new ArrayList<>();
+            for (int intentIndex = 0; intentIndex < 4; intentIndex++) {
+                tmpQuestionIntents.add(this.questionIntents.get(intentIndex));
+            }
+            this.DataDialogueTrees.add(new DataDialogueTree());
+            this.DataDialogueTrees.get(treeIndex).questionLayers.add(tmpQuestionIntents);
+            this.DataDialogueTrees.get(treeIndex).classes = this.characters.get(treeIndex).classes;
+        }
+
+        //for each intent in each layer in each tree add a responseIntent
+        //to the matching responseIntent layer
+        //for each subsequent response that isn't dead, add a questionintent
+        //ensure that a questionIntent within a single tree is not a duplicate
+        for(DataDialogueTree tree: this.DataDialogueTrees) {
+            for(List<DataQuestionIntent> dQISet: tree.questionLayers) {
+                for (DataQuestionIntent dQI: dQISet) {
+                    //select a random class from the dialoguetree
+                    Classes ranClass = tree.classes.get(ran.nextInt(tree.classes.size()));
+                    //get the set of possible responseIntents for the current questionIntent
+                    List<Integer> respSetID = this.questionToResponses.get(dQI.id);
+                    //select a responseIntent based on a randomly selected class of our DT/character
+                }
+            }
         }
     }
 }

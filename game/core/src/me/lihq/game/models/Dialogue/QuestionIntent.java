@@ -4,20 +4,21 @@ package me.lihq.game.models.Dialogue;
  * Created by LJ on 16/02/2017.
  */
 import java.util.ArrayList;
+import java.util.List;
 
 public class QuestionIntent {
-    private ArrayList<Question> questions;
+    private List<Question> questions;
     private ResponseIntent response;
     //string used when displaying the question intents to choose from
     private String description;
 
-    QuestionIntent(ArrayList<Question> questions, ResponseIntent resp, String description) {
+    public QuestionIntent(List<Question> questions, ResponseIntent resp, String description) {
         this.questions = questions;
         this.response = resp;
         this.description = description;
     }
 
-    QuestionIntent(ArrayList<Question> questions, String description) {
+    public QuestionIntent(List<Question> questions, String description) {
         this.questions = questions;
         this.description = description;
     }
@@ -28,14 +29,11 @@ public class QuestionIntent {
         return this.description;
     }
 
-    ArrayList<Question> getStyleChoices(){
+    List<Question> getStyleChoices(){
         return this.questions;
     }
 
     ResponseIntent getResponseIntent(){
         return this.response;
     }
-
-
-
 }
