@@ -38,7 +38,7 @@ public class Player extends AbstractPerson
      */
     public Player(String name, String imgSrc, int tileX, int tileY)
     {
-        super(name, "people/player/" + imgSrc, tileX, tileY);
+        super(name, "people/player/sprite_sets/" + imgSrc, tileX, tileY);
         importDialogue("Player.JSON");
         animTime = Settings.TPS / 7f;
     }

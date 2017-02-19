@@ -98,8 +98,13 @@ public class GameMain extends Game
      * The generate game screen generates the game. this is triggered by the completion of the CharacterCreationScreen.
      * An array list of traits is passed in for the generation class to make use of.
      */
-    public void generateGame(ArrayList<String> traits) {
+    public void generateGame(ArrayList<String> traits, String playerCostume) {
         this.gameMap = new Map(); //instantiate game map
+
+        //Add ALL NPCs to the list
+        //This is how you initialise an NPC
+        this.player = new Player("Player", playerCostume, 3, 6);
+        this.player.setRoom(gameMap.getRoom(0));
 
         this.initialiseAllPeople();
 
@@ -122,12 +127,12 @@ public class GameMain extends Game
         Assets.load();// Load in the assets the game needs
 
         //Set up the Menu
-        menuScreen = new MainMenuScreen(this);
+        this.menuScreen = new MainMenuScreen(this);
         this.journalScreen = new JournalScreen(this);
         this.creationScreen = new CharacterCreationScreen(this);
         this.wonGameScreen = new WonGameScreen(this);
 
-        this.setScreen(menuScreen);
+        this.setScreen(this.menuScreen);
 
         //Instantiate the FPSLogger to show FPS
         FPS = new FPSLogger();
@@ -216,11 +221,6 @@ public class GameMain extends Game
      */
     public void initialiseAllPeople()
     {
-        //Add ALL NPCs to the list
-        //This is how you initialise an NPC
-        player = new Player("Player", "player.png", 3, 6);
-        player.setRoom(gameMap.getRoom(0));
-
         //TODO: Sort NPC personalities
         NPC npc = new NPC("Colin", "colin.png", 15, 17, gameMap.getRoom(0), true, "Colin.JSON");
         NPCs.add(npc);

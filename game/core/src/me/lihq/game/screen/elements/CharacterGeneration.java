@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData.Region;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -17,6 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.lihq.game.GameMain;
@@ -34,6 +38,9 @@ public class CharacterGeneration {
     private ArrayList<String> traits;
     private static int maxTraits = 3;
     private GameMain game;
+    private ArrayList<Sprite> costumes;
+    private String[] costumeList;
+    private int currentCostumePointer;
 
     /**
      * This is the camera for the screen
@@ -42,7 +49,6 @@ public class CharacterGeneration {
 
     public CharacterGeneration(GameMain game) {
         this.uiSkin = this.initSkin();
-        this.stage = this.initGeneration();
         this.traits = new ArrayList<String>();
         this.game = game;
 
@@ -53,6 +59,61 @@ public class CharacterGeneration {
         this.camera.update();
 
         this.batch = new SpriteBatch();
+        this.costumes = new ArrayList<Sprite>();
+
+        this.stage = this.initGeneration();
+    }
+
+    /**
+     * Initialises the costume generation
+     * @param stage
+     */
+    private void initCostumeSelection(Stage stage) {
+        JsonValue jsonData = new JsonReader().parse(Gdx.files.internal("people/player/sprite_sets/sprites.JSON"));
+
+        this.costumeList = jsonData.get("sprites").asStringArray();
+
+        for (int i = 0; i < this.costumeList.length; i++) {
+            String spriteFile = this.costumeList[i].substring(1, this.costumeList[i].length() - 1);
+            System.out.println(spriteFile);
+
+            Texture texture = new Texture(Gdx.files.internal("people/player/sprite_sets/" + spriteFile));
+            Sprite sprite = new Sprite(texture, 0, 0, 30, 48);
+            sprite.scale(4);
+            System.out.println(sprite == null);
+            sprite.setPosition(690, 350);
+
+            this.costumes.add(sprite);
+        }
+
+        this.currentCostumePointer = 0;
+
+        final TextButton nextButton = new TextButton("Next", uiSkin);
+        nextButton.setPosition(840, 400);
+
+        // Add a listener to the finish button
+        nextButton.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                if (currentCostumePointer < costumeList.length - 1){
+                    currentCostumePointer += 1;
+                }
+            }
+        });
+
+        final TextButton previousButton = new TextButton("Previous", uiSkin);
+        previousButton.setPosition(550, 400);
+
+        // Add a listener to the finish button
+        previousButton.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                if (currentCostumePointer > 0){
+                    currentCostumePointer -= 1;
+                }
+            }
+        });
+
+        stage.addActor(nextButton);
+        stage.addActor(previousButton);
     }
 
     /**
@@ -127,7 +188,8 @@ public class CharacterGeneration {
         finishButton.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 if (traits.size() == maxTraits){
-                    game.generateGame(traits);
+                    String playerFile = costumeList[currentCostumePointer].substring(1, costumeList[currentCostumePointer].length() - 1);
+                    game.generateGame(traits, playerFile);
                     game.setScreen(game.navigationScreen);
                 }
             }
@@ -137,6 +199,8 @@ public class CharacterGeneration {
         stage.addActor(titleLable);
         stage.addActor(instructionLabel);
         stage.addActor(finishButton);
+
+        this.initCostumeSelection(stage);
 
         return stage;
     }
@@ -156,6 +220,7 @@ public class CharacterGeneration {
     public void renderMain() {
         this.batch.begin();
         this.backgroundImage.draw(this.batch); //draw the journal background
+        this.costumes.get(this.currentCostumePointer).draw(this.batch);
         this.batch.end();
 
         //draw the GUI elements
