@@ -111,7 +111,7 @@ public class GameMain extends Game
         this.navigationScreen = new NavigationScreen(this);
         this.navigationScreen.updateTiledMapRenderer();
 
-        ScenarioDatabase db = new ScenarioDatabase("scenarioo_gen.db", traits);
+        ScenarioDatabase db = new ScenarioDatabase("scenario_gen.db", traits);
 
     }
 

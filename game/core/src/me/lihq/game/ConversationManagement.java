@@ -126,15 +126,8 @@ public class ConversationManagement {
         ArrayList<SpeechBoxButton> buttons = new ArrayList<>();
         SpeechBoxButton.EventHandler eventHandler = (result) -> handleResponse(QuestionStage.TYPE, result);
 
-        if (!player.collectedClues.isEmpty()) {
-            // We can only ask questions if we have clues to ask about.
-            buttons.add(new SpeechBoxButton("Question?", 0, eventHandler));
-        } else {
-            // Tell the player they need clues if they try to question without any clues.
-            speechboxMngr.addSpeechBox(new SpeechBox(
-                "You need to find some clues before you question a suspect", 3
-            ));
-        }
+        // We can only ask questions if we have clues to ask about.
+        buttons.add(new SpeechBoxButton("Question?", 0, eventHandler));
 
         if (player.collectedClues.size() >= 4) {
             // If we have enough clues, we can accuse.
