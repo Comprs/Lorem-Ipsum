@@ -15,43 +15,44 @@ import java.util.List;
 /**
  * This class defines the player that the person playing the game will be represented by.
  */
-public class Player extends AbstractPerson
-{
+public class Player extends AbstractPerson {
     /**
      * This object stores the clues that the player has picked up
      */
     public List<Clue> collectedClues = new ArrayList<>();
+
     /**
      * This stores whether the player is in the middle of a conversation or not
      */
     public boolean inConversation = false;
-    /**
-     * The personality will be a percent score (0-100) 0 being angry, 50 being neutral, and 100 being happy/nice.
-     */
+
+    // The personality will be a percent score (0-100) 0 being angry, 50 being neutral, and 100
+    // being happy/nice.
     private int personalityLevel = 50;
 
     /**
-     * This is the constructor for player, it creates a new playable person
+     * This is the constructor for player, it creates a new playable person.
      *
-     * @param name   - The name for the new player.
-     * @param imgSrc - The image used to represent it.
+     * @param name The name for the new player.
+     * @param imgSrc The image used to represent it.
+     * @param tileX The spritesheet x location.
+     * @param tileY The spritesheet y location.
      */
-    public Player(String name, String imgSrc, int tileX, int tileY)
-    {
+    public Player(String name, String imgSrc, int tileX, int tileY) {
         super(name, "people/player/sprite_sets/" + imgSrc, tileX, tileY);
         animTime = Settings.TPS / 7f;
     }
 
     /**
      * This method will change the players personality by the given amount.
-     * It will cap the personality between 0 and 100.
      * <p>
-     * If the change takes it out of these bounds, it will change it to the min or max.
+     * It will cap the personality between 0 and 100. If the change takes it out of these bounds,
+     * it will change it to the min or max.
+     * </p>
      *
-     * @param change - The amount to change by, can be positive or negative
+     * @param change The amount to change by, can be positive or negative.
      */
-    public void addToPersonality(int change)
-    {
+    public void addToPersonality(int change) {
         personalityLevel = personalityLevel + change;
 
         if (personalityLevel < 0) {
@@ -65,10 +66,9 @@ public class Player extends AbstractPerson
     /**
      * This Moves the player to a new tile.
      *
-     * @param dir the direction that the player should move in.
+     * @param dir The direction that the player should move in.
      */
-    public void move(Direction dir)
-    {
+    public void move(Direction dir) {
         if (this.state != PersonState.STANDING) {
             return;
         }
@@ -91,10 +91,11 @@ public class Player extends AbstractPerson
     }
 
     /**
-     * This method is called when the player interacts with the map
+     * This method is called when the player interacts with the map.
+     *
+     * @param scoreTracker The score tracker to manipulate.
      */
-    public void interact(ScoreTracker scoreTracker)
-    {
+    public void interact(ScoreTracker scoreTracker) {
         if (inConversation) return;
 
         NPC npc = getFacingNPC();
@@ -106,12 +107,11 @@ public class Player extends AbstractPerson
     }
 
     /**
-     * This method tries to get an NPC if the player is facing one
+     * This method tries to get an NPC if the player is facing one.
      *
-     * @return (NPC) returns null if there isn't an NPC infront of them or the NPC is moving. Otherwise, it returns the NPC
+     * @return The npc the player is facing. It is null if such does not exist.
      */
-    private NPC getFacingNPC()
-    {
+    private NPC getFacingNPC() {
         for (NPC npc : GameMain.me.getNPCS(getRoom())) {
             if ((npc.getTileCoordinates().x == getTileCoordinates().x + getDirection().getDx()) && (npc.getTileCoordinates().y == getTileCoordinates().y + getDirection().getDy())) {
                 if (npc.getState() != PersonState.STANDING) return null;
@@ -123,11 +123,8 @@ public class Player extends AbstractPerson
         return null;
     }
 
-    /**
-     * This method checks to see if the tile the player is facing has a clue hidden in it or not
-     */
-    private void checkForClue(ScoreTracker scoreTracker)
-    {
+    // This method checks to see if the tile the player is facing has a clue hidden in it or not.
+    private void checkForClue(ScoreTracker scoreTracker) {
         int x = getTileCoordinates().x + getDirection().getDx();
         int y = getTileCoordinates().y + getDirection().getDy();
 
@@ -147,23 +144,23 @@ public class Player extends AbstractPerson
     }
 
     /**
-     * This method returns whether or not the player is standing on a tile that initiates a Transition to another room
+     * This method returns whether or not the player is standing on a tile that initiates a
+     * Transition to another room.
      *
-     * @return (boolean) Whether the player is on a trigger tile or not
+     * @return Whether the player is on a trigger tile or not.
      */
-    public boolean isOnTriggerTile()
-    {
+    public boolean isOnTriggerTile() {
         return this.getRoom().isTriggerTile(this.tileCoordinates.x, this.tileCoordinates.y);
     }
 
     /**
-     * Getter for personality, it uses the personalityLevel of the player and thus returns either AGGRESSIVE, NEUTRAL or NICE
+     * Getter for personality, it uses the personalityLevel of the player and thus returns either
+     * AGGRESSIVE, NEUTRAL or NICE.
      *
-     * @return - (Personality) Returns the personality of this player.
+     * @return Returns the personality of this player.
      */
     @Override
-    public Personality getPersonality()
-    {
+    public Personality getPersonality() {
         if (personalityLevel < 33) {
             return Personality.AGGRESSIVE;
 
@@ -177,21 +174,21 @@ public class Player extends AbstractPerson
     }
 
     /**
-     * This gets the players personality level; this similar to Personality but a integer representation
+     * This gets the players personality level; this similar to Personality but a integer
+     * representation.
      *
-     * @return (int) value between 0-100
+     * @return Value between 0-100.
      */
-    public int getPersonalityLevel()
-    {
+    public int getPersonalityLevel() {
         return this.personalityLevel;
     }
 
 
     /**
-     * This takes the player at its current position, and automatically gets the transition data for the next room and applies it to the player and game
+     * This takes the player at its current position, and automatically gets the transition data
+     * for the next room and applies it to the player and game.
      */
-    public void moveRoom()
-    {
+    public void moveRoom() {
         if (isOnTriggerTile()) {
             Room.Transition newRoomData = this.getRoom().getTransitionData(this.getTileCoordinates().x, this.getTileCoordinates().y);
 

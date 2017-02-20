@@ -11,46 +11,42 @@ import me.lihq.game.screen.elements.DebugOverlay;
 import java.util.*;
 
 /**
- * OrthogonalTiledMapRendererWithPeople
+ * This class is an extension of the OrthogonalTiledMapRenderer that deals with rendering sprites
+ * as well.
  * <p>
- * This class is an extension of the OrthogonalTiledMapRenderer that deals with
- * rendering sprites aswell. The last layer of the map is designed to be drawn OVER
- * the player sprite and NPCs. So this controls that by drawing each layer until it comes to the last
- * one, then it draws the sprites, then the final layer.
+ * The last layer of the map is designed to be drawn over the player sprite and NPCs. So this
+ * controls that by drawing each layer until it comes to the last one, then it draws the sprites,
+ * then the final layer.
+ * </p>
  */
-public class OrthogonalTiledMapRendererWithPeople extends OrthogonalTiledMapRenderer
-{
-    /**
-     * This is the list of people that are to be rendered to the map
-     */
-    public List<AbstractPerson> people;
+public class OrthogonalTiledMapRendererWithPeople extends OrthogonalTiledMapRenderer {
+    // This is the list of people that are to be rendered to the map.
+    private List<AbstractPerson> people;
 
     /**
-     * Constructor for the map renderer
+     * Constructor for the map renderer.
      *
-     * @param map - The TiledMap that is to be rendered using this renderer
+     * @param map The TiledMap that is to be rendered using this renderer.
      */
-    public OrthogonalTiledMapRendererWithPeople(TiledMap map)
-    {
+    public OrthogonalTiledMapRendererWithPeople(TiledMap map) {
         super(map);
 
         people = new ArrayList<>();
     }
 
     /**
-     * This adds sprite to the list of sprites to be rendered before the final layer.
+     * Add a sprite to the list of sprites to be rendered before the final layer.
      *
-     * @param sprite - Sprite to be added
+     * @param sprite Sprite to add.
      */
-    public void addPerson(AbstractPerson sprite)
-    {
+    public void addPerson(AbstractPerson sprite) {
         people.add(sprite);
     }
 
     /**
-     * This adds a list of AbstractPerson to the sprite list
+     * Add a list of AbstractPerson to the sprite list.
      *
-     * @param sprites
+     * @param sprites The sprites to add.
      */
     public void addPerson(List<AbstractPerson> sprites)
     {
@@ -60,22 +56,16 @@ public class OrthogonalTiledMapRendererWithPeople extends OrthogonalTiledMapRend
     }
 
     /**
-     * This method clears the list of people to be rendered
+     * Clear the list of people to be rendered.
      */
-    public void clearPeople()
-    {
+    public void clearPeople() {
         people.clear();
     }
 
-    /**
-     * This overrides the render method in the super class.
-     * <p>
-     * It draws all the map layers until the final one. Then it draws all the sprites in the
-     * sprite list, then it draws the final layer.
-     */
     @Override
-    public void render()
-    {
+    public void render() {
+        // It draws all the map layers until the final one. Then it draws all the sprites in the
+        // sprite list, then it draws the final layer.
         beginRender();
 
         people.sort(new PersonPositionComparator());

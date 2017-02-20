@@ -11,13 +11,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import me.lihq.game.GameMain;
 
 /**
- * Creates a Notepad for the Journal scren and allows it to be
- * rendered.
- * @author jacobwunwin
- *
+ * Creates a Notepad for the Journal scren and allows it to be rendered.
  */
 public class Notepad {
-
     private Skin uiSkin;
     private Stage stage;
     private GameMain game;
@@ -30,7 +26,8 @@ public class Notepad {
 
     /**
      * Initialise the Notepad GUI elements.
-     * @return
+     *
+     * @return The fully initialised notepad.
      */
     public Stage initNotepad() {
         Stage stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
@@ -55,7 +52,7 @@ public class Notepad {
     }
 
     /**
-     * Renders the Notepad GUI elements
+     * Renders the Notepad GUI elements.
      */
     public void renderMain() {
         this.stage.act();
@@ -63,27 +60,24 @@ public class Notepad {
     }
 
     /**
-     * Returns the stage containing all GUI elements
-     * @return
+     * Returns the stage containing all GUI elements.
+     *
+     * @return The internal stage.
      */
     public Stage getStage() {
         return stage;
     }
 
     /**
-     * This method disposes of all elements
+     * This method disposes of all elements.
      */
-    public void dispose() {
-        //stage.dispose();
-    }
+    public void dispose() {}
 
     /**
      * This method is called when the window is resized.
      *
-     * @param width  - The new width
-     * @param height - The new height
+     * @param width The new width.
+     * @param height The new height.
      */
-    public void resize(int width, int height) {
-        //stage.getViewport().update(width, height, true);
-    }
+    public void resize(int width, int height) {}
 }
