@@ -102,7 +102,7 @@ public class ScenarioDatabase {
     public ScenarioDatabase(String dbName, List<String> traits) {
         this();
         Random ranGen = new Random();
-        try (Connection sqlConn = DriverManager.getConnection("jdbc:sqlite" + dbName)) {
+        try (Connection sqlConn = DriverManager.getConnection("jdbc:sqlite:" + dbName)) {
             this.loadCharacters(sqlConn);
             this.loadRelations(sqlConn);
 
