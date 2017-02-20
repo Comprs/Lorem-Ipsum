@@ -21,7 +21,7 @@ public class DialogueTree {
     private HashMap<Style, Mood> mapStyleMood = new HashMap<>();
     private Mood mood;
     private boolean hasBeenWrong = false;
-    ArrayList<QuestionIntent> questions;
+    List<QuestionIntent> questions;
 
     public enum Mood {
         NERVOUS,
@@ -32,9 +32,9 @@ public class DialogueTree {
     /**
      * Initializer function.
      */
-    public DialogueTree(ArrayList<QuestionIntent> questions, Mood startMood, List<Style> style){
+    public DialogueTree(List<QuestionIntent> questions, List<Style> style){
         this.questions = questions;
-        this.mood = startMood;
+        this.mood = Mood.RELAXED;
         for (int counter = 0; counter < 3; counter++) {
             this.mapStyleMood.put(style.get(counter), Mood.values()[counter]);
         }
@@ -61,7 +61,7 @@ public class DialogueTree {
         return intents;
     }
 
-    ArrayList<QuestionIntent> getAvailableIntents(){
+    List<QuestionIntent> getAvailableIntents(){
         return this.questions;
     }
 

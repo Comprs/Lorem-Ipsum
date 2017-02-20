@@ -122,21 +122,8 @@ public class Map
         return null;
     }
 
-
-    /**
-     * Returns the amount of rooms created by the map
-     *
-     * @return (int) number of rooms
-     */
-    public int getAmountOfRooms()
-    {
-        return rooms.size();
-    }
-
-
     /**
      * Gets the rooms in the map.
-     *
      * @return List of rooms in the map.
      */
     public List<Room> getRooms()
