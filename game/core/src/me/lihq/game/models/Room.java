@@ -105,7 +105,6 @@ public class Room
             Room r = (Room) obj;
             return r.getID() == this.getID();
         }
-
         return false;
     }
 
@@ -195,7 +194,6 @@ public class Room
     public void drawClues(float delta, Batch batch)
     {
         animationStateTime += delta;
-
         for (Clue c : cluesInRoom) {
             TextureRegion currentFrame = Assets.CLUE_GLINT.getKeyFrame(animationStateTime, true);
             batch.draw(currentFrame, c.getTileX() * Settings.TILE_SIZE, c.getTileY() * Settings.TILE_SIZE);

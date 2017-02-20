@@ -44,26 +44,21 @@ public class NPC extends AbstractPerson
      * Define an NPC with location coordinates , room, spritesheet and whether or not they can be the killer
      *
      * @param name The name of the NPC
-     * @param spriteSheet The filename of the spritesheet for this NPC.
      * @param tileX x coordinate of tile that the NPC will be initially rendered on.
      * @param tileY y coordinate of tile that the NPC will be initially rendered on.
      * @param room ID of room they are in.
-     * @param canBeKiller Boolean whether they can or cannot be the killer.
      * @param dialogueTree The dialogue tree.
      */
     public NPC(
         String name,
-        String spriteSheet,
         int tileX,
         int tileY,
         Room room,
-        boolean canBeKiller,
         DialogueTree dialogueTree
     ) {
-        super(name, "people/NPCs/" + spriteSheet, tileX, tileY);
+        super(name, "people/NPCs/" + name, tileX, tileY);
         this.setRoom(room);
         this.random = new Random();
-        this.canBeKiller = canBeKiller;
         this.dialogueTree = dialogueTree;
     }
 

@@ -23,7 +23,7 @@ public class QuestionIntent {
         this.description = description;
     }
 
-    void attachResponse(ResponseIntent resp) { this.response = resp; }
+    public void attachResponse(ResponseIntent resp) { this.response = resp; }
 
     String getDescription(){
         return this.description;
@@ -33,7 +33,7 @@ public class QuestionIntent {
         return this.questions;
     }
 
-    ResponseIntent getResponseIntent(){
+    public ResponseIntent getResponseIntent(){
         return this.response;
     }
 }

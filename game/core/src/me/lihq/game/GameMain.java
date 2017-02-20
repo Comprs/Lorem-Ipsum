@@ -92,8 +92,6 @@ public class GameMain extends Game
     public void generateGame(ArrayList<String> traits, String playerCostume) {
         this.gameMap = new Map(); //instantiate game map
 
-        //Add ALL NPCs to the list
-        //This is how you initialise an NPC
         this.player = new Player("Player", playerCostume, 3, 6);
         this.player.setRoom(gameMap.getRoom(0));
 
@@ -102,7 +100,7 @@ public class GameMain extends Game
         this.navigationScreen.updateTiledMapRenderer();
 
         ScenarioDatabase db = new ScenarioDatabase("scenario_gen.db", traits);
-
+        db.initialiseGame(gameMap.getRooms(), this.NPCs);
     }
 
     /**
