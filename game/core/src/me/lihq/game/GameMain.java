@@ -106,10 +106,6 @@ public class GameMain extends Game
         this.player = new Player("Player", playerCostume, 3, 6);
         this.player.setRoom(gameMap.getRoom(0));
 
-        this.initialiseAllPeople();
-
-        initialiseClues();
-
         //set up the screen and display the first room
         this.navigationScreen = new NavigationScreen(this);
         this.navigationScreen.updateTiledMapRenderer();
@@ -217,79 +213,6 @@ public class GameMain extends Game
     }
 
     /**
-     * Generates all the NPC's, Players
-     */
-    public void initialiseAllPeople()
-    {
-        //TODO: Sort NPC personalities
-        NPC npc = new NPC("Colin", "colin.png", 15, 17, gameMap.getRoom(0), true, "Colin.JSON");
-        NPCs.add(npc);
-
-        NPC npc2 = new NPC("Diana", "diana.png", 4, 4, gameMap.getRoom(1), true, "Diana.JSON");
-        NPCs.add(npc2);
-
-        NPC npc3 = new NPC("Lily", "lily.png", 0, 0, gameMap.getRoom(0), true, "Lily.JSON");
-        NPCs.add(npc3);
-
-        NPC npc4 = new NPC("Mary", "mary.png", 0, 0, gameMap.getRoom(0), true, "Mary.JSON");
-        NPCs.add(npc4);
-
-        NPC npc5 = new NPC("Mike", "mike.png", 0, 0, gameMap.getRoom(0), true, "Mike.JSON");
-        NPCs.add(npc5);
-
-        NPC npc6 = new NPC("Will", "will.png", 0, 0, gameMap.getRoom(0), true, "Will.JSON");
-        NPCs.add(npc6);
-
-        int amountOfRooms = gameMap.getAmountOfRooms();
-
-        List<Integer> roomsLeft = new ArrayList<>();
-
-        for (int i = 0; i < amountOfRooms; i++) {
-            roomsLeft.add(i);
-        }
-
-        for (NPC loopNpc : NPCs) {
-            /*
-            Refill the rooms left list if there are more NPCs than Rooms. This will put AT LEAST one NPC per room if so.
-             */
-            if (roomsLeft.isEmpty()) {
-                for (int i = 0; i < amountOfRooms; i++) {
-                    roomsLeft.add(i);
-                }
-            }
-
-            /*
-            Pick a random room and put that NPC in it
-             */
-            int toTake = new Random().nextInt(roomsLeft.size() - 1);
-            int selectedRoom = roomsLeft.get(toTake);
-            roomsLeft.remove(toTake);
-
-            loopNpc.setRoom(gameMap.getRoom(selectedRoom));
-            Vector2Int position = loopNpc.getRoom().getRandomLocation();
-            loopNpc.setTileCoordinates(position.x, position.y);
-
-            System.out.println(loopNpc.getName() + " has been placed in room " + selectedRoom + " at " + position);
-        }
-
-        /*
-        Generate who the Killer and Victim are
-         */
-        NPC killer = NPCs.get(new Random().nextInt(NPCs.size() - 1));
-
-        while (!killer.setKiller()) {
-            killer = NPCs.get(new Random().nextInt(NPCs.size() - 1));
-        }
-
-        NPC victim = NPCs.get(new Random().nextInt(NPCs.size() - 1));
-
-
-        while (!victim.setVictim()) {
-            victim = NPCs.get(new Random().nextInt(NPCs.size() - 1));
-        }
-    }
-
-    /**
      * This method returns a list of the NPCs that are in the specified room
      *
      * @param room The room to check.
@@ -305,40 +228,5 @@ public class GameMain extends Game
         }
 
         return npcsInRoom;
-    }
-
-    /**
-     * This method initialises all the clues that are to be added to the games.
-     */
-    private void initialiseClues()
-    {
-        //This is a temporary list of clues
-        List<Clue> tempClues = new ArrayList<>();
-
-        tempClues.add(new Clue("Big Footprint", "A big footprint left at the crime scene by the killer.", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        tempClues.add(new Clue("Small Footprint", "A small footprint left at the crime scene by the killer.", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        tempClues.add(new Clue("Glasses", "A pair of glasses these were found by another detective at the crime scene.", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        tempClues.add(new Clue("Bag", "A bag. Someone must have left in a hurry.", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        tempClues.add(new Clue("Lipstick", "Lipstick, a killers best friend.", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        tempClues.add(new Clue("Right Handed", "This indicates the killer is right handed", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        tempClues.add(new Clue("Dark Hair", "A dark hair from the crime scene", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        //tempClues.add(new Clue("Clue 8", "test Desc", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        //tempClues.add(new Clue("Clue 9", "test Desc", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-        //tempClues.add(new Clue("Clue 10", "test Desc", new TextureRegion(Assets.CLUE_SHEET, 0, 0, 32, 32)));
-
-        Collections.shuffle(tempClues);
-
-        for (Room room : gameMap.getRooms()) {
-            if (tempClues.isEmpty()) return;
-
-            Vector2Int randHidingSpot = room.getRandHidingSpot();
-
-            if (randHidingSpot != null) {
-                room.addClue(tempClues.get(0).setTileCoordinates(randHidingSpot));
-                tempClues.remove(0);
-            }
-
-        }
-
     }
 }

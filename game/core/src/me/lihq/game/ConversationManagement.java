@@ -9,11 +9,12 @@ import me.lihq.game.screen.elements.SpeechBoxButton;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+
 /**
  * This class controls conversation flow between Player and NPCs
  */
-public class ConversationManagement
-{
+public class ConversationManagement {
     /**
      * The player that will be starting the conversation
      */
@@ -33,6 +34,10 @@ public class ConversationManagement
      * This stores the position of the clue in the players list for use in the questioning
      */
     private int tempCluePos;
+
+    private ArrayList<String> tempIntents;
+
+    private String tempCurrentIntent;
 
     /**
      * This stores the style of questioning for how the player wants to ask the question
@@ -57,13 +62,37 @@ public class ConversationManagement
         this.scoreTracker = scoreTracker;
     }
 
+
+    /**
+     * This is the enumeration for the different stages of questioning the NPC
+     */
+    public enum QuestionStage {
+
+        /**
+         * This stage indicates that the player has been asked what type of question they have asked
+         * e.g. question or accuse
+         */
+        TYPE,
+
+        /**
+         * Thus stage means that the player has been asked the how they want to ask the question
+         * e.g. nice, neutral or harsh
+         */
+        STYLE,
+
+        /**
+         * This stage indicates that the player has been asked what intent they want to ask.
+         */
+        INTENT
+    }
+
+
     /**
      * This method starts a conversation with the specified NPC
      *
      * @param npc - The NPC to have a conversation with
      */
-    public void startConversation(NPC npc)
-    {
+    public void startConversation(NPC npc) {
         this.tempCluePos = -1;
         this.tempQuestionStyle = null;
         this.tempNPC = npc;
@@ -74,7 +103,7 @@ public class ConversationManagement
         player.inConversation = true;
 
         //Introduction
-        speechboxMngr.addSpeechBox(new SpeechBox(this.player.getName(), this.player.getSpeech("Introduction"), 5));
+        speechboxMngr.addSpeechBox(new SpeechBox("What can I do for you?", 3));
 
         // If the NPC has been accused, then we can no longer interact with them. Abort the
         // conversation early and with the appropriate text.
@@ -86,16 +115,13 @@ public class ConversationManagement
             return;
         }
 
-        speechboxMngr.addSpeechBox(new SpeechBox(this.tempNPC.getName(), this.tempNPC.getSpeech("Introduction"), 5));
-
         queryQuestionType();
     }
 
     /**
      * This constructs the speech box that finds out what question the player wishes to ask the NPC
      */
-    private void queryQuestionType()
-    {
+    private void queryQuestionType() {
 
         ArrayList<SpeechBoxButton> buttons = new ArrayList<>();
         SpeechBoxButton.EventHandler eventHandler = (result) -> handleResponse(QuestionStage.TYPE, result);
@@ -106,7 +132,7 @@ public class ConversationManagement
         } else {
             // Tell the player they need clues if they try to question without any clues.
             speechboxMngr.addSpeechBox(new SpeechBox(
-                "You need to find some clues before you question a suspect", 5
+                "You need to find some clues before you question a suspect", 3
             ));
         }
 
@@ -125,53 +151,55 @@ public class ConversationManagement
     /**
      * This constructs the speechbox that asks the player how they wish to ask the question
      */
-    private void queryQuestionStyle()
-    {
+    private void chooseStyle() {
         ArrayList<SpeechBoxButton> buttons = new ArrayList<>();
         SpeechBoxButton.EventHandler eventHandler = (result) -> handleResponse(QuestionStage.STYLE, result);
 
-        buttons.add(new SpeechBoxButton("Nicely", 0, eventHandler));
-        buttons.add(new SpeechBoxButton("Neutrally", 1, eventHandler));
-        buttons.add(new SpeechBoxButton("Aggressively", 2, eventHandler));
+        //generates the ordered array list of all available intents
+        ArrayList<String> intents = this.tempNPC.dialogueTree.getAvailableIntentsAsString();
+        //generates the ordered array list of all available styles for the current tempIntent
+        ArrayList<String> styles = this.tempNPC.dialogueTree.getAvailableStyles(intents.indexOf(this.tempCurrentIntent));
+        for (int i = 0; i < styles.size(); i++){
+            buttons.add(new SpeechBoxButton(styles.get(i), i, eventHandler));
+        }
+
         speechboxMngr.addSpeechBox(new SpeechBox("How do you want to ask the question?", buttons, -1));
     }
 
-    /**
-     * This constructs the speechbox that asks the player what clue they wish to ask about
-     */
-    private void queryWhichClue()
-    {
+    private void initiateIntentSelection() {
+        this.tempIntents = this.tempNPC.dialogueTree.getAvailableIntentsAsString();
+        this.chooseQuestion();
+    }
+
+    private void chooseQuestion() {
+        this.tempCurrentIntent = this.tempIntents.get(0); //get the current intent to query with the user
+        this.tempIntents.remove(0); //remove the current intent from the front of the array
+        this.tempIntents.add(this.tempCurrentIntent); //add the current intent to the back of the array
+
         ArrayList<SpeechBoxButton> buttons = new ArrayList<>();
-        SpeechBoxButton.EventHandler eventHandler = (result) -> {
-            handleResponse(QuestionStage.CLUE, result);
-        };
+        SpeechBoxButton.EventHandler eventHandler = (result) -> handleResponse(QuestionStage.INTENT, result);
 
+        buttons.add(new SpeechBoxButton("Ask Question", 0, eventHandler));
+        buttons.add(new SpeechBoxButton("Next Question", 1, eventHandler));
 
-        int i = 0;
-        for (Clue c : this.player.collectedClues) {
-            buttons.add(new SpeechBoxButton(c.getName(), i, eventHandler));
-            i++;
-        }
-
-        speechboxMngr.addSpeechBox(new SpeechBox("What clue do you want to ask about?", buttons, -1));
+        speechboxMngr.addSpeechBox(new SpeechBox(this.tempCurrentIntent, buttons, -1));
     }
 
-    /**
-     * This method initialises a questioning user interface
-     */
-    private void questionNPC()
-    {
-        speechboxMngr.addSpeechBox(new SpeechBox(player.getName(), player.getSpeech(player.collectedClues.get(tempCluePos), tempQuestionStyle), 3));
-        speechboxMngr.addSpeechBox(new SpeechBox(tempNPC.getName(), tempNPC.getSpeech(player.collectedClues.get(tempCluePos), tempQuestionStyle), 3));
-        this.scoreTracker.addQuestion();
-        finishConverstation();
+    private void getResponse(int questionStyle) {
+      //generates the ordered array list of all available intents
+        ArrayList<String> intents = this.tempNPC.dialogueTree.getAvailableIntentsAsString();
+        int intent = intents.indexOf(this.tempCurrentIntent);
+        String response = this.tempNPC.dialogueTree.selectStyledQuestion(intent, questionStyle, GameMain.me);
+        speechboxMngr.addSpeechBox(new SpeechBox(response, 5));
     }
+
+
+
 
     /**
      * This method initialises an accusing user interface
      */
-    private void accuseNPC()
-    {
+    private void accuseNPC() {
         if (this.tempNPC.isKiller()) {
             speechboxMngr.addSpeechBox(new SpeechBox("You found the killer - well done!", -1));
             finishConverstation();
@@ -187,8 +215,7 @@ public class ConversationManagement
     /**
      * This method is called when a conversation is over to change some variables back for normal gameplay to resume
      */
-    private void finishConverstation()
-    {
+    private void finishConverstation() {
         this.tempNPC.canMove = true;
         this.player.canMove = true;
         this.player.inConversation = false;
@@ -200,86 +227,39 @@ public class ConversationManagement
      * @param stage  - The stage of the questioning process that they are currently at
      * @param option - The option chosen by the user
      */
-    private void handleResponse(QuestionStage stage, int option)
-    {
+    private void handleResponse(QuestionStage stage, int option) {
         speechboxMngr.removeCurrentSpeechBox();
 
         switch (stage) {
-            case TYPE:
-                switch (option) {
-                    case 0:
-                        queryQuestionStyle();
-                        break;
-                    case 1:
-                        accuseNPC();
-                        break;
-                    case 2:
-                        finishConverstation();
-                        break;
-                }
-                break;
-
-            case STYLE:
-                this.tempQuestionStyle = convertToQuestionStyle(option);
-                queryWhichClue();
-                break;
-
-            case CLUE:
-                this.tempCluePos = option;
-                questionNPC();
-                break;
-        }
-
-    }
-
-    /**
-     * Takes an int and returns a personality style
-     *
-     * @param style 0 = Nice
-     *              1 = Neutral
-     *              2 = AGGRESSIVE
-     *              default is Neutral
-     * @return
-     */
-    private Personality convertToQuestionStyle(int style)
-    {
-        switch (style) {
+        case TYPE:
+            switch (option) {
             case 0:
-                return Personality.NICE;
-
+                initiateIntentSelection();
+                break;
             case 1:
-                return Personality.NEUTRAL;
-
+                accuseNPC();
+                break;
             case 2:
-                return Personality.AGGRESSIVE;
+                finishConverstation();
+                break;
+            }
+            break;
 
+        case INTENT:
+            switch (option) {
+            case 0:
+                chooseQuestion();
+                break;
+            case 1:
+                chooseStyle();
+                break;
+            }
+            break;
+
+        case STYLE:
+            this.getResponse(option);
+            break;
         }
-        //defaults to Neutral
-        return Personality.NEUTRAL;
     }
-
-    /**
-     * This is the enumeration for the different stages of questioning the NPC
-     */
-    public enum QuestionStage
-    {
-
-        /**
-         * This stage indicates that the player has been asked what type of question they have asked
-         * e.g. question or accuse
-         */
-        TYPE,
-
-        /**
-         * Thus stage means that the player has been asked the how they want to ask the question
-         * e.g. nice, neutral or harsh
-         */
-        STYLE,
-
-        /**
-         * This stage indicates that the player has been asked what clue they want to ask about.
-         */
-        CLUE
-    }
-
 }
+

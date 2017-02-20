@@ -53,7 +53,7 @@ public class DialogueTree {
      * gives a preview of the question intents you can use (player selects one, then selects a style)
      * @return
      */
-    ArrayList<String> getAvailableIntentsAsString(){
+    public ArrayList<String> getAvailableIntentsAsString(){
         ArrayList<String> intents = new ArrayList<>();
         for (QuestionIntent questionIntent : this.questions){
             intents.add(questionIntent.getDescription());
@@ -70,7 +70,7 @@ public class DialogueTree {
      * given a QuestionIntent, return the available styled questions as an arraylist of strings
      * @return
      */
-    ArrayList<String> getAvailableStyles(int intentSelection){
+    public ArrayList<String> getAvailableStyles(int intentSelection){
         ArrayList<String> styledQuestions = new ArrayList<>();
         for (Question styledQuestion : this.questions.get(intentSelection).getStyleChoices()){
             styledQuestions.add(styledQuestion.getStyle().name() + " : " + styledQuestion.getQuestionText());
@@ -86,7 +86,7 @@ public class DialogueTree {
      * and a clue is yielded, otherwise a bad response and no progressing is given.
      * @return
      */
-    String selectStyledQuestion(int intentSelection, int styleSelection, GameMain gameMain){
+    public String selectStyledQuestion(int intentSelection, int styleSelection, GameMain gameMain){
         ResponseIntent respInt = this.questions.get(intentSelection).getResponseIntent();
         Style style = this.questions.get(intentSelection).getStyleChoices().get(styleSelection).getStyle();
         this.questions.remove(intentSelection);
