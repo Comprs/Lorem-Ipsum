@@ -20,6 +20,8 @@ public class Clue extends Sprite
      */
     private String description;
 
+    private boolean isRenderable;
+
     /**
      * This is the location on the map in terms of tiles can be set using {@link #setTileCoordinates(int, int)}
      * Note: this is different to com.badlogic.gdx.graphics.g2d.Sprite.position that is the position on the screen in terms of pixels,
@@ -37,6 +39,11 @@ public class Clue extends Sprite
     public Clue(String name, String description, TextureRegion texture)
     {
         super(texture);
+        this.name = name;
+        this.description = description;
+    }
+
+    public Clue(String name, String description) {
         this.name = name;
         this.description = description;
     }
