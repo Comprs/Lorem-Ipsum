@@ -109,7 +109,6 @@ public class ScenarioDatabase {
             //choosing our murderer class from the set of classes, then
             //a random victim class from the classes present in the relation
             //must take care to ensure things are truly random.
-<<<<<<< HEAD
             int randomNum = ranGen.nextInt(Classes.values().length);
             Classes murderClass = Classes.values()[randomNum];
             List<Classes> victimSet = this.murderVictimRelations.get(murderClass);
@@ -124,18 +123,6 @@ public class ScenarioDatabase {
             this.loadQuestionIntent(sqlConn);
             this.loadQuestionToResponse(sqlConn);
             this.loadResponseIntent(sqlConn);
-=======
-
-            int randomNum = ranGen.nextInt(Classes.values().length - 1);
-            Classes murderClass = Classes.values()[randomNum];
-            List<Classes> victimSet = this.murderVictimRelations.get(murderClass);
-            Classes victimClass = victimSet.get(ranGen.nextInt(victimSet.size() - 1));
-            List<DataCharacter> murdererAndVictim = this.chooseMurdererVictim(ranGen, murderClass, victimClass);
-            murdererAndVictim.get(0).isMurderer = true;
-            murdererAndVictim.get(1).isVictim = true;
-
-            this.loadClue(sqlConn, murderClass, victimClass);
->>>>>>> 30f1022... most of the generation loading from database complete.
 
 
         } catch (SQLException e) {
@@ -172,19 +159,7 @@ public class ScenarioDatabase {
         }
     }
 
-<<<<<<< HEAD
     private void chooseMurdererVictim(Random ranGen, Classes mClass, Classes vClass) {
-=======
-    /**
-     *
-     * @param ranGen
-     * @param mClass
-     * @param vClass
-     * @return arraylist whose first value is the chosen murderer, and second value is the chosen victim. we are playin' god.
-     */
-    private List<DataCharacter> chooseMurdererVictim(Random ranGen, Classes mClass, Classes vClass) {
-        List<DataCharacter> murdererAndVictim = new ArrayList<>();
->>>>>>> 30f1022... most of the generation loading from database complete.
         List<DataCharacter> tempM = new ArrayList<>();
         List<DataCharacter> tempV = new ArrayList<>();
         for (DataCharacter c : this.characters.values()) {
@@ -197,16 +172,10 @@ public class ScenarioDatabase {
                 }
             }
         }
-<<<<<<< HEAD
         this.murderer = tempM.get(ranGen.nextInt(tempM.size()));
         this.murderer.isMurderer = true;
         this.victim = tempV.get(ranGen.nextInt(tempV.size()));
         this.victim.isVictim = true;
-=======
-        murdererAndVictim.add(tempM.get(ranGen.nextInt(tempM.size() - 1)));
-        murdererAndVictim.add(tempV.get(ranGen.nextInt(tempV.size() - 1)));
-        return murdererAndVictim;
->>>>>>> 30f1022... most of the generation loading from database complete.
     }
 
     private void loadRelations(Connection conn) {
@@ -318,10 +287,6 @@ public class ScenarioDatabase {
         }
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 30f1022... most of the generation loading from database complete.
     private void loadClue(Connection conn, Classes mClass, Classes vClass) {
         try (Statement stmt = conn.createStatement()) {
             ResultSet resSet = stmt.executeQuery("SELECT * from Clues");
@@ -331,20 +296,14 @@ public class ScenarioDatabase {
                 if (clue.classes.contains(mClass) || clue.classes.contains(vClass)) {
                     clue.id = resSet.getInt("id");
                     clue.name = resSet.getString("name");
-<<<<<<< HEAD
                     clue.description = resSet.getString("description");
                     clue.storyNode = resSet.getInt("story");
                     clue.isAbstract = resSet.getBoolean("isAbstract");
                     clue.inDialogue = resSet.getString("inDialogue");
-=======
-                    clue.storyNode = resSet.getInt("story");
-                    clue.isAbstract = resSet.getBoolean("isAbstract");
->>>>>>> 30f1022... most of the generation loading from database complete.
 
                     this.clues.put(clue.id, clue);
                 }
             }
-<<<<<<< HEAD
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -417,10 +376,5 @@ public class ScenarioDatabase {
                 }
             }
         }
-=======
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
->>>>>>> 30f1022... most of the generation loading from database complete.
     }
 }
