@@ -26,7 +26,7 @@ public class ScenarioDatabase {
         PICKYEATER,
         CRAPPYBARISTA,
         ANGRYLIBRARIAN,
-        TBA
+        HOMOCIDALLECTURER
     }
 
     public class DataCharacter{
@@ -115,7 +115,7 @@ public class ScenarioDatabase {
             Classes victimClass = victimSet.get(ranGen.nextInt(victimSet.size()));
 
             this.chooseMurdererVictim(ranGen, murderClass, victimClass);
-            this.loadClue(sqlConn, murderClass, victimClass);
+            this.loadClue(sqlConn, victimClass);
             this.loadWeapon(sqlConn, murderClass);
 
             this.loadQuestion(sqlConn);
@@ -124,6 +124,8 @@ public class ScenarioDatabase {
             this.loadQuestionToResponse(sqlConn);
             this.loadResponseIntent(sqlConn);
 
+            this.generateTrees();
+            this.trimClues();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -267,18 +269,15 @@ public class ScenarioDatabase {
                     responseIntent.responses.add(resSet.getString("response" + Integer.toString(counter)));
                 }
 
-
                 int tmpClueID = resSet.getInt("clue");
                 if (!resSet.wasNull()) {
                     DataClue tmpDataClue = this.clues.get(tmpClueID);
-                    for (Classes c: tmpDataClue.classes) {
                         for (Classes mClass: this.murderer.classes) {
-                            if(c == mClass) {
+                            if(tmpDataClue.classes.contains(mClass)) {
                                 responseIntent.clue = new Clue(tmpDataClue.name, tmpDataClue.description);
+                                responseIntent.correctResponse = responseIntent.correctResponse + tmpDataClue.inDialogue;
                             }
                         }
-                    }
-
                 }
                 this.responseIntents.put(responseIntent.id, responseIntent);
             }
@@ -287,21 +286,23 @@ public class ScenarioDatabase {
         }
     }
 
-    private void loadClue(Connection conn, Classes mClass, Classes vClass) {
+    private void loadClue(Connection conn, Classes vClass) {
         try (Statement stmt = conn.createStatement()) {
             ResultSet resSet = stmt.executeQuery("SELECT * from Clues");
             while (resSet.next()) {
                 DataClue clue = new DataClue();
                 clue.classes = this.parseClassString(resSet.getString("classes"));
-                if (clue.classes.contains(mClass) || clue.classes.contains(vClass)) {
-                    clue.id = resSet.getInt("id");
-                    clue.name = resSet.getString("name");
-                    clue.description = resSet.getString("description");
-                    clue.storyNode = resSet.getInt("story");
-                    clue.isAbstract = resSet.getBoolean("isAbstract");
-                    clue.inDialogue = resSet.getString("inDialogue");
+                for (Classes mClass: this.murderer.classes) {
+                    if (clue.classes.contains(mClass) || clue.classes.contains(vClass)) {
+                        clue.id = resSet.getInt("id");
+                        clue.name = resSet.getString("name");
+                        clue.description = resSet.getString("description");
+                        clue.storyNode = resSet.getInt("story");
+                        clue.isAbstract = resSet.getBoolean("isAbstract");
+                        clue.inDialogue = resSet.getString("inDialogue");
 
-                    this.clues.put(clue.id, clue);
+                        this.clues.put(clue.id, clue);
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -332,6 +333,22 @@ public class ScenarioDatabase {
         }
     }
 
+    private void trimClues() {
+        List<Integer> cluesPerStoryNode = new ArrayList<>();
+        for(int nodes = 0; nodes < 6; nodes++) {
+            cluesPerStoryNode.add(0);
+        }
+
+        for (DataClue c: this.clues.values()) {
+            int numCluesAtNode = cluesPerStoryNode.get(c.storyNode);
+            if (numCluesAtNode < 3 && !c.isAbstract) {
+                this.clues.remove(c.id);
+            } else if (!c.isAbstract){
+                cluesPerStoryNode.add(c.storyNode, numCluesAtNode + 1);
+            }
+        }
+    }
+
     private void generateTrees() {
         Random ran = new Random();
         //creating the initial intents for all trees
@@ -344,6 +361,11 @@ public class ScenarioDatabase {
             this.DataDialogueTrees.get(treeIndex).questionLayers.add(tmpQuestionIntents);
             this.DataDialogueTrees.get(treeIndex).classes = this.characters.get(treeIndex).classes;
         }
+        //remove the introductory questions so they do not repeat.
+        this.questionIntents.remove(0);
+        this.questionIntents.remove(1);
+        this.questionIntents.remove(2);
+        this.questionIntents.remove(3);
 
         //for each intent in each layer in each tree add a responseIntent
         //to the matching responseIntent layer
