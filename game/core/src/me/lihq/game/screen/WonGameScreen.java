@@ -49,6 +49,7 @@ public class WonGameScreen extends AbstractScreen
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(this.wonGame.stage);
         Gdx.input.setInputProcessor(multiplexer);
+        this.wonGame.update();
     }
 
     /**
