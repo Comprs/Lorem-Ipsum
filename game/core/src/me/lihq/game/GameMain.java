@@ -43,12 +43,12 @@ public class GameMain extends Game
     /**
      * A list holding NPC objects
      */
-    public List<NPC> NPCs = new ArrayList<>();
+    private List<NPC> NPCs = new ArrayList<>();
 
     /**
      * The game map
      */
-    public Map gameMap;
+    private Map gameMap;
     /**
      * A player object for the player of the game
      */
@@ -57,8 +57,8 @@ public class GameMain extends Game
     /**
      * This controls the game ticks and calculating how many ticks per second there are
      */
-    public int ticks = 0;
-    public int lastSecond = -1;
+    private int ticks = 0;
+    private int lastSecond = -1;
 
     /**
      * A screen to be used to display standard gameplay within the game , including the status bar.
@@ -68,12 +68,12 @@ public class GameMain extends Game
     /**
      * An FPSLogger, FPSLogger allows us to check the game FPS is good enough
      */
-    FPSLogger FPS;
+    private FPSLogger FPS;
 
     /**
      * The main menu screen that shows up when the game is first started
      */
-    public MainMenuScreen menuScreen;
+    private MainMenuScreen menuScreen;
 
     /**
      * The Creation Screen that is used to select character traits
