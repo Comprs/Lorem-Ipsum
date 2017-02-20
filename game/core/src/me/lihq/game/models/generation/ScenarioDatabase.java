@@ -101,8 +101,15 @@ public class ScenarioDatabase {
 
     public ScenarioDatabase(String dbName, List<String> traits) {
         this();
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         Random ranGen = new Random();
         try (Connection sqlConn = DriverManager.getConnection("jdbc:sqlite:" + dbName)) {
+            System.out.println("Connection to db made!");
             this.loadCharacters(sqlConn);
             this.loadRelations(sqlConn);
 
@@ -135,8 +142,10 @@ public class ScenarioDatabase {
     private List<Classes> parseClassString(String classString) {
         List<Classes> classes = new ArrayList<>();
         String[] classStringArr = classString.split(",");
+        System.out.println(classString);
         for (String w: classStringArr) {
-            classes.add(Classes.values()[Integer.getInteger(w)]);
+            int value = Integer.valueOf(w);
+            classes.add(Classes.values()[value]);
         }
         return classes;
     }
