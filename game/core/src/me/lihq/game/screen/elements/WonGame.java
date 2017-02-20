@@ -57,6 +57,11 @@ public class WonGame
     private SpriteBatch batch;
 
     /**
+     * The label used to display the score.
+     */
+    private Label score;
+
+    /**
      * Constructor for the menu
      *
      * @param game      - The game object the menu is being loaded for
@@ -94,7 +99,6 @@ public class WonGame
 
         //Creating the label containing text and determining  its size and location on screen
         Label text;
-        Label score;
 
         TextButton newStartButton = new TextButton("New game", buttonSkin);
 
@@ -107,14 +111,14 @@ public class WonGame
         text.setBounds(x1, y1a + y1b, text.getWidth(), text.getHeight());
 
         String finalScore;
-        finalScore = String.format("\nFinal Score: \n\n %1$d", 10);
-        score = new Label(finalScore, textStyle);
-        score.setAlignment(1, 1);
-        score.setFontScale(2, 2);
 
-        x1 = Gdx.graphics.getWidth() / 2 - score.getWidth() / 2;
+        this.score = new Label("Score : NA", textStyle);
+        this.score.setAlignment(1, 1);
+        this.score.setFontScale(2, 2);
+
+        x1 = Gdx.graphics.getWidth() / 2 - this.score.getWidth() / 2;
         y1a = Gdx.graphics.getHeight() / 2 + Gdx.graphics.getHeight() / 4;
-        score.setBounds(x1, y1a, score.getWidth(), score.getHeight());
+        this.score.setBounds(x1, y1a, this.score.getWidth(), this.score.getHeight());
 
         //Making the "New Game" button clickable and causing it to start the game
         newStartButton.addListener(new ClickListener() {
@@ -172,6 +176,14 @@ public class WonGame
         textButtonStyle.over = buttonSkin.newDrawable("background", Color.LIGHT_GRAY);
         textButtonStyle.font = buttonSkin.getFont("default");
         buttonSkin.add("default", textButtonStyle);
+    }
+
+    public void update(){
+        String finalScore = String.format("\nFinal Score: \n\n %1$d", GameMain.me.scoreTracker.collectScore((x, y, z, i) -> {
+            return -y + z + i;
+        }));
+
+        this.score.setText(finalScore);
     }
 
     /**
