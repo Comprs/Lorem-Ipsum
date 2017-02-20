@@ -15,79 +15,50 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import me.lihq.game.GameMain;
 
 /**
- * Reusable Main initMenu UI, can be used for the pause screen aswell.
+ * Reusable Main initMenu UI, can be used for the pause screen as well.
  */
-
-public class WonGame
-{
-    /**
-     * The background color of the menu
-     */
+public class WonGame {
+    // The background colour of the menu.
     private static final Color BACKGROUND_COLOR = Color.GRAY;
 
-    /**
-     * The width of the menu
-     */
+    // The width of the menu.
     private static final int WIDTH = Gdx.graphics.getWidth() / 2 - Gdx.graphics.getWidth() / 8;
 
-    //Initialising necessary objects and variables
     /**
-     * the stage to render the menu to
+     * The stage to render the menu to.
      */
     public Stage stage;
 
-    /**
-     * The default button skins
-     */
+    // The default button skins.
     private Skin buttonSkin;
 
-    /**
-     * This stores whether or not the menu is for the main menu (false) or pause menu (true)
-     */
-    private boolean pauseMenu;
-
-    /**
-     * This is the camera for the menu
-     */
+    // This is the camera for the menu.
     private OrthographicCamera camera;
 
-    /**
-     * This is the sprite batch of the menu that elements are rendered on.
-     */
+    // This is the sprite batch of the menu that elements are rendered on.
     private SpriteBatch batch;
 
-    /**
-     * The label used to display the score.
-     */
+    // The label used to display the score.
     private Label score;
 
     /**
-     * Constructor for the menu
+     * Constructor for the menu.
      *
-     * @param game      - The game object the menu is being loaded for
-     * @param pauseMenu - Whether it is a pause menu or not
+     * @param game The game object the menu is being loaded for.
      */
     public WonGame(final GameMain game) {
         //Initialising new stage
         this.stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        this.pauseMenu = pauseMenu;
 
         //Initialising the skin made for the buttons
         initButtonSkin();
-
-        //Initialising things required for text
-
 
         //Loading the menu or pause screen
         initMenu(game);
     }
 
-    /**
-     * This method is called if you want to initialise the main menu
-     *
-     * @param game - The game to initialise the menu for
-     */
+    // This method is called if you want to initialise the main menu.
     private void initMenu(final GameMain game) {
         //Creating the buttons using the button skin
         //An if statement that lets the same class be used for both the pause and main menu
@@ -153,9 +124,7 @@ public class WonGame
     }
 
 
-    /**
-     * This method creates the skins for the buttons
-     */
+    // This method creates the skins for the buttons.
     private void initButtonSkin() {
         //Create a font
         BitmapFont font = new BitmapFont();
@@ -187,10 +156,10 @@ public class WonGame
     }
 
     /**
-     * This method is called to render the main menu to the stage
+     * This method is called to render the main menu to the stage.
      */
     public void render() {
-        //Determining the background colour of the menu
+        //Determining the background colour of the menu.
         Gdx.gl.glClearColor(135, 206, 235, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //Rendering the buttons
@@ -199,10 +168,10 @@ public class WonGame
     }
 
     /**
-     * This method disposes of all elements
+     * This method disposes of all elements.
      */
     public void dispose() {
-        //Called when disposing the main menu
+        //Called when disposing the main menu.
         stage.dispose();
         batch.dispose();
     }
@@ -210,8 +179,8 @@ public class WonGame
     /**
      * This method is called when the window is resized.
      *
-     * @param width  - The new width
-     * @param height - The new height
+     * @param width The new width.
+     * @param height The new height.
      */
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);

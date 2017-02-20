@@ -13,10 +13,7 @@ import me.lihq.game.GameMain;
 import me.lihq.game.models.Clue;
 
 /**
- * Creates components for the clues viewer for the Journal screen
- * and allows them to be rendered.
- * @author jacobwunwin
- *
+ * Creates components for the clues viewer for the Journal screen and allows them to be rendered.
  */
 public class Clues {
     private GameMain game;
@@ -32,9 +29,10 @@ public class Clues {
 
     /**
      * Creates the Clues GUI elements and places them correctly.
-     * @param game
-     * @param uiSkin
-     * @return
+     *
+     * @param game The game of this clue.
+     * @param uiSkin The ui skin to use,
+     * @return A fully initialised Clues object.
      */
     public Stage initClues(GameMain game, Skin uiSkin) {
         //generates a new stage
@@ -68,7 +66,7 @@ public class Clues {
     }
 
     /**
-     * Updates the clues table
+     * Updates the clues table.
      */
     public void updateMain() {
         //reset the cluesTable and update its contents
@@ -83,7 +81,7 @@ public class Clues {
     }
 
     /**
-     * Renders the Clues GUI elements
+     * Renders the Clues GUI elements.
      */
     public void renderMain() {
         this.stage.act();
@@ -91,7 +89,7 @@ public class Clues {
     }
 
     /**
-     * This method disposes of all elements
+     * This method disposes of all elements.
      */
     public void dispose() {
         this.stage.dispose();
@@ -100,16 +98,17 @@ public class Clues {
     /**
      * This method is called when the window is resized.
      *
-     * @param width  - The new width
-     * @param height - The new height
+     * @param width The new width.
+     * @param height The new height.
      */
     public void resize(int width, int height) {
         //stage.getViewport().update(width, height, true);
     }
 
     /**
-     * Returns the stage used to hold GUI elements
-     * @return
+     * Returns the stage used to hold GUI elements.
+     *
+     * @return The state.
      */
     public Stage getStage() {
         return this.stage;

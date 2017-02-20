@@ -1,15 +1,30 @@
 package me.lihq.game;
 
+/**
+ * This keeps track of various parameters which are intended to contribute to the score.
+ * <p>
+ * These attributes include:
+ * </p>
+ * <ul>
+ * <li>Time Taken</li>
+ * <li>The Number of Incorrect Accusations</li>
+ * <li>The Number of Asked Questions</li>
+ * <li>The number of Clues Found</li>
+ * </ul>
+ */
 public class ScoreTracker {
     /**
      * This will be the interface to a score calculator object.
+     *
+     * An object which implements this interface should use the single method to calculate a score
+     * from the given values.
      */
     @FunctionalInterface
     public static interface ScoreCalculator {
         /**
          * Calculate the score with the given values.
          *
-         * @param timeTake The time taken so far in the game in milliseconds.
+         * @param timeTaken The time taken so far in the game in milliseconds.
          * @param incorrectAccusations The number of incorrect accusations made so far.
          * @param askedQuestions The number of questions asked so far.
          * @param cluesFound The number of clues found so far.
@@ -25,10 +40,13 @@ public class ScoreTracker {
     // uses a simplistic approach to time.
     private long startTime;
 
+    // For the following three properties, no attempt is made to ensure that no duplicate
+    // accusations, questions or clues increment the counters. This is a task for the user. However
+    // it is possible to modify this class for this functionality by taking some way to identify
+    // the item of the parameter to be incremented; storing it in a set which replaces these
+    // integer counters.
     private int incorrectAccusations;
-
     private int askedQuestions;
-
     private int cluesFound;
 
     /**

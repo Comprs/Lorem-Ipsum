@@ -11,25 +11,28 @@ import static org.junit.Assert.*;
  */
 public class NPCUnitTests extends GameTester
 {
-    public NPC colin;
-    public Room room;
+    /**
+     * public NPC colin;
+     public Room room;
 
-    @Before
-    public void makeNPC()
-    {
-        room = new Room(0, "testRoom0.tmx", "Test Room 0");
-        colin = new NPC("bob", "colin.png", 1,1, room, false, "Colin.JSON");
-    }
+     @Before
+     public void makeNPC()
+     {
+     room = new Room(0, "testRoom0.tmx", "Test Room 0");
+     colin = new NPC("bob", "colin.png", 1,1, room, false, "Colin.JSON");
+     }
 
-    @Test
-    public void testGetName() {
-        assertEquals("getting the name of the NPC failing", "bob", colin.getName());
-    }
+     @Test
+     public void testGetName() {
+     assertEquals("getting the name of the NPC failing", "bob", colin.getName());
+     }
 
-    @Test
-    public void testPersonality() {
-        assertEquals(AbstractPerson.Personality.NICE, colin.getPersonality());
-    }
+     @Test
+     public void testPersonality() {
+     assertEquals(AbstractPerson.Personality.NICE, colin.getPersonality());
+     }
+      */
+
 
 
 }

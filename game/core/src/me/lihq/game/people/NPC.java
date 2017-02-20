@@ -11,60 +11,54 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * The class which is responsible for the non-playable characters within the game that the player will meet.
+ * The class which is responsible for the non-playable characters within the game that the player
+ * will meet.
  */
 public class NPC extends AbstractPerson
 {
-
-    //These variables are specific to the NPC only
-
     /**
-     * Associated clues
+     * Associated clues.
      */
     public List<Clue> associatedClues = new ArrayList<>();
+
     private Random random;
 
-    /**
-     * The motive string details why the NPC committed the murder.
-     */
+    // The motive string details why the NPC committed the murder.
     private String motive = "";
 
-    /**
-     * These two booleans decide whether an NPC has the potential to be a killer and if, in this particular game, they
-     * are the killer.
-     */
+    // These two booleans decide whether an NPC has the potential to be a killer and if, in this
+    // particular game, they are the killer.
     private boolean canBeKiller = false;
     private boolean isKiller = false;
     private boolean isVictim = false;
 
     public DialogueTree dialogueTree;
 
-    /**
-     * This indicates whether the NPC has been accused.
-     */
+    // This indicates whether the NPC has been accused.
     private boolean hasBeenAccused = false;
 
-    /**
-     * This stores the players personality {@link me.lihq.game.people.AbstractPerson.Personality}
-     */
+    // This stores the players personality {@link me.lihq.game.people.AbstractPerson.Personality}
     private Personality personality;
 
     /**
      * Define an NPC with location coordinates , room, spritesheet and whether or not they can be the killer
      *
-     * @param tileX       - x coordinate of tile that the NPC will be initially rendered on.
-     * @param tileY       - y coordinate of tile that the NPC will be initially rendered on.
-     * @param room        - ID of room they are in
-     * @param spriteSheet - Spritesheet for this NPC
-     * @param canBeKiller - Boolean whether they can or cannot be the killer
+     * @param name The name of the NPC
+     * @param tileX x coordinate of tile that the NPC will be initially rendered on.
+     * @param tileY y coordinate of tile that the NPC will be initially rendered on.
+     * @param room ID of room they are in.
+     * @param dialogueTree The dialogue tree.
      */
-    public NPC(String name, String spriteSheet, int tileX, int tileY, Room room, boolean canBeKiller, DialogueTree dialogueTreee)
-    {
-        super(name, "people/NPCs/" + spriteSheet, tileX, tileY);
+    public NPC(
+        String name,
+        int tileX,
+        int tileY,
+        Room room,
+        DialogueTree dialogueTree
+    ) {
+        super(name, "people/NPCs/" + name, tileX, tileY);
         this.setRoom(room);
         this.random = new Random();
-        this.canBeKiller = canBeKiller;
-
         this.dialogueTree = dialogueTree;
     }
 
@@ -72,8 +66,7 @@ public class NPC extends AbstractPerson
      * This method is called once a game tick to randomise movement.
      */
     @Override
-    public void update()
-    {
+    public void update() {
         super.update();
         this.randomMove();
     }
@@ -82,10 +75,9 @@ public class NPC extends AbstractPerson
     /**
      * Allow the NPC to move around their room.
      *
-     * @param dir the direction person should move in
+     * @param dir the direction person should move in.
      */
-    public void move(Direction dir)
-    {
+    public void move(Direction dir) {
         if (this.state != PersonState.STANDING) {
             return;
         }
@@ -100,11 +92,8 @@ public class NPC extends AbstractPerson
         initialiseMove(dir);
     }
 
-    /**
-     * This method attempts to move the NPC in a random direction
-     */
-    private void randomMove()
-    {
+    // This method attempts to move the NPC in a random direction.
+    private void randomMove() {
         if (getState() == PersonState.WALKING) return;
 
         if (random.nextDouble() > 0.01) {
@@ -133,52 +122,46 @@ public class NPC extends AbstractPerson
     /**
      * Getter for canBeKiller
      *
-     * @return (boolean) Returns value of canBeKiller for this object. {@link #canBeKiller}
+     * @return Returns value of canBeKiller for this object. {@link #canBeKiller}
      */
-    public boolean canBeKiller()
-    {
+    public boolean canBeKiller() {
         return canBeKiller;
     }
 
     /**
      * Getter for isKiller.
      *
-     * @return (boolean) Return a value of isKiller for this object. {@link #isKiller}
+     * @return Return a value of isKiller for this object. {@link #isKiller}
      */
-    public boolean isKiller()
-    {
+    public boolean isKiller() {
         return isKiller;
     }
 
     /**
      * Getter for isVictim
      *
-     * @return (boolean) Returns the value of isVictim for this object {@link #isVictim}
+     * @return Returns the value of isVictim for this object {@link #isVictim}
      */
-    public boolean isVictim()
-    {
+    public boolean isVictim() {
         return isVictim;
     }
 
     /**
      * Getter for motive.
      *
-     * @return (String) Returns the motive string for this object. {@link #motive}
+     * @return Returns the motive string for this object. {@link #motive}
      */
-    public String getMotive()
-    {
+    public String getMotive() {
         return motive;
     }
 
     /**
      * Setter for the NPC's motive string.
      *
-     * @param motive - The motive this particular NPC has for committing the murder.
-     * @return (NPC) Returns the NPC object as this is how the NPC's are built
-     * by returning and adding each part.
+     * @param motive The motive this particular NPC has for committing the murder.
+     * @return Returns the NPC object.
      */
-    public NPC setMotive(String motive)
-    {
+    public NPC setMotive(String motive) {
         this.motive = motive;
         return this;
     }
@@ -186,12 +169,12 @@ public class NPC extends AbstractPerson
     /**
      * This method sets the NPC as the killer for this game.
      * <p>
-     * It first checks they aren't the victim and if they can be the killer
+     * It first checks they aren't the victim and if they can be the killer.
+     * </p>
      *
-     * @return (boolean) Returns whether it successfully set the NPC to the killer or not
+     * @return Returns whether it successfully set the NPC to the killer or not.
      */
-    public boolean setKiller()
-    {
+    public boolean setKiller() {
         if (isVictim() || !canBeKiller) return false;
 
         isKiller = true;
@@ -200,14 +183,14 @@ public class NPC extends AbstractPerson
     }
 
     /**
-     * This method sets the NPC to be the victim for the game
+     * This method sets the NPC to be the victim for the game.
      * <p>
-     * It first checks if the NPC isn't also the killer
+     * It first checks if the NPC isn't also the killer.
+     * </p>
      *
-     * @return (boolean) Returns whether it successfully set the NPC to the victim or not
+     * @return Returns whether it successfully set the NPC to the victim or not.
      */
-    public boolean setVictim()
-    {
+    public boolean setVictim() {
         if (isKiller()) return false;
 
         isVictim = true;
@@ -217,26 +200,23 @@ public class NPC extends AbstractPerson
 
 
     /**
-     * This handles speech for a clue that has a question style
+     * This handles speech for a clue that has a question style.
      *
-     * @param clue  the clue to be questioned about
-     * @param style the style of questioning
-     * @return (String) the speech
+     * @param clue The clue to be questioned about.
+     * @param style The style of questioning.
+     * @return The speech.
      */
-    public String getSpeech(Clue clue, Personality style)
-    {
+    public String getSpeech(Clue clue, Personality style) {
         return null;
-
     }
 
     /**
-     * This method returns the NPCs personality
+     * This method returns the NPCs personality.
      *
-     * @return (Personality) the NPCs personality {@link me.lihq.game.people.AbstractPerson.Personality}
+     * @return The NPCs personality {@link me.lihq.game.people.AbstractPerson.Personality}
      */
     @Override
-    public Personality getPersonality()
-    {
+    public Personality getPersonality() {
         return this.personality;
     }
 
@@ -249,6 +229,8 @@ public class NPC extends AbstractPerson
 
     /**
      * Get whether the NPC has been accused.
+     *
+     * @return Whether the NPC has been accused.
      */
     public boolean isAccused() {
         return this.hasBeenAccused;

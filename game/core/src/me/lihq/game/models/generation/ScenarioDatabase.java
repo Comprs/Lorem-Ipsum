@@ -1,13 +1,14 @@
 package me.lihq.game.models.generation;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
+import me.lihq.game.Assets;
 import me.lihq.game.models.Clue;
 import me.lihq.game.models.Dialogue.*;
+import me.lihq.game.models.Room;
+import me.lihq.game.people.NPC;
+import me.lihq.game.screen.elements.journal.Clues;
 
 
 /**
@@ -85,6 +86,12 @@ public class ScenarioDatabase {
     public HashMap<Integer, DataClue> clues;
     public Clue murderWeaponClue;
     public List<DataDialogueTree> DataDialogueTrees;
+    public List<Question.Style> styles;
+
+    //lists of instantiated classes
+    List<NPC> instCharacters;
+    List<DialogueTree> instDialogueTree;
+    List<Clue> instClues;
 
     public ScenarioDatabase() {
         this.murderVictimRelations = new HashMap<>();
@@ -96,7 +103,9 @@ public class ScenarioDatabase {
         this.clues = new HashMap<>();
         this.DataDialogueTrees = new ArrayList<>();
 
-
+        this.instCharacters = new ArrayList<>();
+        this.instDialogueTree = new ArrayList<>();
+        this.instClues = new ArrayList<>();
     }
 
     public ScenarioDatabase(String dbName, List<String> traits) {
@@ -112,6 +121,8 @@ public class ScenarioDatabase {
             System.out.println("Connection to db made!");
             this.loadCharacters(sqlConn);
             this.loadRelations(sqlConn);
+            System.out.println(traits);
+            this.loadStyles(traits);
 
             //choosing our murderer class from the set of classes, then
             //a random victim class from the classes present in the relation
@@ -126,7 +137,7 @@ public class ScenarioDatabase {
             this.loadWeapon(sqlConn, murderClass);
 
             this.loadQuestion(sqlConn);
-            this.trimQuestions(traits);
+            this.trimQuestions();
             this.loadQuestionIntent(sqlConn);
             this.loadQuestionToResponse(sqlConn);
             this.loadResponseIntent(sqlConn);
@@ -167,6 +178,16 @@ public class ScenarioDatabase {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadStyles(List<String> traits) {
+        for(String trait: traits) {
+            for (Question.Style style: Question.Style.values()) {
+                if (trait.equalsIgnoreCase(style.name())) {
+                    this.styles.add(style);
+                }
+            }
         }
     }
 
@@ -332,10 +353,10 @@ public class ScenarioDatabase {
     }
 
     //removes questions that don't have the style chosen by the player from the set of questions
-    private void trimQuestions(List<String> traits) {
+    private void trimQuestions() {
         for (DataQuestion q: this.questions.values()) {
-            for (String trait: traits) {
-                if (!trait.equalsIgnoreCase(q.style.name())) {
+            for (Question.Style style: this.styles) {
+                if (q.style != style) {
                     this.questions.remove(q.id);
                 }
             }
@@ -344,7 +365,7 @@ public class ScenarioDatabase {
 
     private void trimClues() {
         List<Integer> cluesPerStoryNode = new ArrayList<>();
-        for(int nodes = 0; nodes < 6; nodes++) {
+        for(int nodes = 0; nodes < 4; nodes++) {
             cluesPerStoryNode.add(0);
         }
 
@@ -408,4 +429,76 @@ public class ScenarioDatabase {
             }
         }
     }
+
+    public void initialiseGame(List<Room> rooms, List<NPC> npcs) {
+        //initialise dialogueTrees from DataDialogueTrees
+        //initialise sets of clues from DataClues (ensure the isabstract field is false)
+        //distribute (randomly?) across the rooms
+        Random ran = new Random();
+
+        for(DataDialogueTree dTree: this.DataDialogueTrees) {
+            //has a list of quesitonintents that chain
+            List<List<QuestionIntent>> tmp = new ArrayList<>();
+            //get the end setlayers
+            for(int layerIndex = dTree.questionLayers.size(); layerIndex > 0; layerIndex--) {
+                List<DataQuestionIntent> latestQLayer = dTree.questionLayers.get(layerIndex);
+                List<DataResponseIntent> latestRLayer = dTree.responseLayers.get(layerIndex);
+
+                //for each dQuestion and dResponse in the layers, link them together
+                for (int Index = 0; Index < latestQLayer.size(); Index++) {
+                    List<QuestionIntent> tmpQuestionIntents = new ArrayList<>();
+                    QuestionIntent tmpQI = new QuestionIntent(latestQLayer.get(Index).questions,
+                            latestQLayer.get(Index).description);
+                    ResponseIntent tmpRI = new ResponseIntent(latestRLayer.get(Index).responses,
+                            latestRLayer.get(Index).correctResponse,
+                            latestRLayer.get(Index).clue);
+                    tmpQI.attachResponse(tmpRI);
+                    //add the QI to the list representing the current "layer"
+                    tmpQuestionIntents.add(tmpQI);
+                    //add that list to the tmp so that they can continue to be processed in the later
+                    tmp.add(tmpQuestionIntents);
+                }
+            }
+            //begin attaching the question/response pairs together
+            for(int Index = tmp.size() - 1; Index > 0; Index--) {
+                List<QuestionIntent> pairs = tmp.get(Index);
+                List<QuestionIntent> successorPairs = tmp.get(Index + 1);
+                int deadResponses = 0;
+
+                for(int counter = 0; counter < pairs.size(); counter++) {
+                    ResponseIntent tmpRI = pairs.get(counter).getResponseIntent();
+                    if(!tmpRI.isDead()) {
+                        deadResponses += 1;
+                    }
+                    else {
+                        tmpRI.attachQuestionIntent(successorPairs.get(counter - deadResponses));
+                    }
+                }
+            }
+            DialogueTree tree = new DialogueTree(tmp.get(tmp.size()-1), this.styles);
+            this.instDialogueTree.add(tree);
+            //i have never before felt such elation as i had when writing this single line of code
+        }
+
+        for(int counter = 0; counter < this.instDialogueTree.size(); counter++) {
+            DialogueTree dTree = this.instDialogueTree.get(counter);
+            DataCharacter character = this.characters.get(counter);
+            this.instCharacters.add(new NPC(character.name,1,1, rooms.get(ran.nextInt(rooms.size())), dTree));
+        }
+
+        for(DataClue clue: this.clues.values()) {
+            this.instClues.add(new Clue(clue.name, clue.description,  Assets.getArrowDirection("NORTH")));
+        }
+
+        //ensure each room has one clue
+        for(int index = 0; index < rooms.size(); index++) {
+            rooms.get(index).addClue(this.instClues.get(index));
+        }
+        for(int index = rooms.size()-1;index < this.instClues.size(); index++) {
+            int random = ran.nextInt(rooms.size());
+            rooms.get(random).addClue(this.instClues.get(index));
+        }
+    }
+
 }
+
