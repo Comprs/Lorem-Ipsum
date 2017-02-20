@@ -4,13 +4,13 @@ package me.lihq.game;
  * This keeps track of various parameters which are intended to contribute to the score.
  * <p>
  * These attributes include:
+ * </p>
  * <ul>
  * <li>Time Taken</li>
  * <li>The Number of Incorrect Accusations</li>
  * <li>The Number of Asked Questions</li>
  * <li>The number of Clues Found</li>
  * </ul>
- * </p>
  */
 public class ScoreTracker {
     /**
@@ -24,7 +24,7 @@ public class ScoreTracker {
         /**
          * Calculate the score with the given values.
          *
-         * @param timeTake The time taken so far in the game in milliseconds.
+         * @param timeTaken The time taken so far in the game in milliseconds.
          * @param incorrectAccusations The number of incorrect accusations made so far.
          * @param askedQuestions The number of questions asked so far.
          * @param cluesFound The number of clues found so far.

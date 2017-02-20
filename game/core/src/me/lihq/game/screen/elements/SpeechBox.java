@@ -16,27 +16,18 @@ import java.util.ArrayList;
 
 
 /**
- * SpeechBox class
- * Used for rendering box containing text and buttons on screen
- * <p>
- * Usage:
- * SpeechBox sb = new SpeechBox(..)
- * sb.render();
+ * Used for rendering box containing text and buttons on screen.
  * <p>
  * Note: add to InputMultiplexer if using with other UI elements.
+ * </p>
  */
-public class SpeechBox
-{
-    /**
-     * The constant color variables for all SpeechBox's
-     */
+public class SpeechBox {
+    // The constant colour variables for all SpeechBox's
     private static final Color BACKGROUND_COLOR = Color.BLACK;
     private static final Color BORDER_COLOUR = Color.RED;
     private static final Color TEXT_COLOUR = Color.LIGHT_GRAY;
 
-    /**
-     * Layout constants
-     */
+    // Layout constants.
     private static final int WIDTH = Gdx.graphics.getWidth();
     private static final int PADDING = 8;
     private static final int BORDER_WIDTH = 2;
@@ -57,30 +48,26 @@ public class SpeechBox
      */
     public int timeoutDuration;
 
-    /**
-     * The name of the person talking, if any
-     */
+    // The name of the person talking, if any
     private String person;
-
-    /**
-     * This is the text component to display.
-     */
     private String textContent;
 
-    /**
-     * List of buttons to be displayed on the SpeechBox
-     */
+    // List of buttons to be displayed on the SpeechBox
     private ArrayList<SpeechBoxButton> buttons;
-    //Styles
+
+    // Styles
     private Skin buttonSkin;
     private Skin labelSkin;
     private Skin personLabelSkin;
 
     /**
-     * The constructor for the SpeechBox
+     * The constructor for the SpeechBox.
+     *
+     * @param content The text to be displayed.
+     * @param buttonList A list of buttons as possible options.
+     * @param timeout The timeout before automatically closing.
      */
-    public SpeechBox(String content, ArrayList<SpeechBoxButton> buttonList, int timeout)
-    {
+    public SpeechBox(String content, ArrayList<SpeechBoxButton> buttonList, int timeout) {
         textContent = content;
         buttons = buttonList;
         this.timeoutDuration = timeout * Settings.TPS;
@@ -88,10 +75,16 @@ public class SpeechBox
     }
 
     /**
-     * The constructor for the SpeechBox with personName
+     * The constructor for the SpeechBox with personName.
+     *
+     * @param personName The character's name to display.
+     * @param speechText The text to be displayed.
+     * @param buttonList A list of buttons as possible options.
+     * @param timeout The timeout before automatically closing.
      */
-    public SpeechBox(String personName, String speechText, ArrayList<SpeechBoxButton> buttonList, int timeout)
-    {
+    public SpeechBox(
+        String personName, String speechText, ArrayList<SpeechBoxButton> buttonList, int timeout
+    ) {
         person = personName;
         textContent = speechText;
         buttons = buttonList;
@@ -100,10 +93,12 @@ public class SpeechBox
     }
 
     /**
-     * The constructor for the SpeechBox without buttons
+     * The constructor for the SpeechBox without buttons.
+     *
+     * @param content The text to be displayed.
+     * @param timeout The timeout before automatically closing.
      */
-    public SpeechBox(String content, int timeout)
-    {
+    public SpeechBox(String content, int timeout) {
         textContent = content;
         buttons = new ArrayList<>();
         this.timeoutDuration = timeout * Settings.TPS;
@@ -111,10 +106,13 @@ public class SpeechBox
     }
 
     /**
-     * The constructor for the SpeechBox without buttons with personName
+     * The constructor for the SpeechBox without buttons with personName.
+     *
+     * @param personName The character's name to display.
+     * @param speechText The text to be displayed.
+     * @param timeout The timeout before automatically closing.
      */
-    public SpeechBox(String personName, String speechText, int timeout)
-    {
+    public SpeechBox(String personName, String speechText, int timeout) {
         person = personName;
         textContent = speechText;
         buttons = new ArrayList<>();
@@ -122,12 +120,10 @@ public class SpeechBox
         setupStage();
     }
 
-    /**
-     * Sets up the SpeechBox stage ready for rendering
-     * The stage is a Scene2D class that deals with putting UI controls on the screen
-     */
-    private void setupStage()
-    {
+    // The previous four constructors, because who needs DRY?
+
+    //  Sets up the SpeechBox stage ready for rendering.
+    private void setupStage() {
         //Init stage
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
@@ -155,14 +151,8 @@ public class SpeechBox
     }
 
 
-    /**
-     * Add relevant SpeechBox UI controls to table element
-     *
-     * @param table Table to add controls to
-     */
-    private void fillTableContent(Table table)
-    {
-
+    // Add relevant SpeechBox UI controls to table element.
+    private void fillTableContent(Table table) {
         //Calculate constants for use later
         int buttonCount = 0;
         try {
@@ -234,40 +224,31 @@ public class SpeechBox
     }
 
     /**
-     * Renders the speech box
-     * Should be called within the render() method of a screen
+     * Renders the speech box.
      */
-    public void render()
-    {
+    public void render() {
         stage.act();
         stage.draw();
     }
 
     /**
-     * This method is called once a tick by the logic Thread
+     * This method is called once a tick by the logic thread.
      */
-    public void update()
-    {
+    public void update() {
         if (this.timeoutDuration > 0) {
             timeoutDuration--;
         }
     }
 
-    /**
-     * Sets up skin variables used for defining UI control styles
-     */
-    private void initSkins()
-    {
+    // Sets up skin variables used for defining UI control styles.
+    private void initSkins() {
         initButtonSkin();
         initLabelSkin();
         initPersonLabelSkin();
     }
 
-    /**
-     * Sets up the skin for buttons on the speech box
-     */
-    private void initButtonSkin()
-    {
+    // Sets up the skin for buttons on the speech box.
+    private void initButtonSkin() {
         //Create a font
         BitmapFont font = new BitmapFont();
         font.setColor(TEXT_COLOUR);
@@ -291,12 +272,8 @@ public class SpeechBox
 
     }
 
-    /**
-     * Sets up the skin for buttons on the speech box
-     */
-
-    private void initLabelSkin()
-    {
+    // Sets up the skin for buttons on the speech box.
+    private void initLabelSkin() {
         labelSkin = new Skin();
 
         Label.LabelStyle fontStyle = new Label.LabelStyle();
@@ -307,9 +284,7 @@ public class SpeechBox
         labelSkin.add("default", fontStyle);
     }
 
-    /**
-     * Sets up the skin for buttons on the speech box
-     */
+    // Sets up the skin for buttons on the speech box.
     private void initPersonLabelSkin()
     {
         personLabelSkin = new Skin();
@@ -326,19 +301,17 @@ public class SpeechBox
     /**
      * Disposes of SpeechBox resources
      */
-    public void dispose()
-    {
+    public void dispose() {
         stage.dispose();
     }
 
     /**
-     * This method is called on a window resize
+     * This method is called on a window resize.
      *
-     * @param width  - the new width
-     * @param height - the new height
+     * @param width the new width
+     * @param height the new height
      */
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 }

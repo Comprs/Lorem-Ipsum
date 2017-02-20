@@ -18,39 +18,32 @@ import me.lihq.game.GameMain;
 import me.lihq.game.screen.PauseScreen;
 
 /**
- * The status bar shown throughout the game
- * Contains UI controls for presenting the game status to the player
+ * The status bar shown throughout the game.
+ * <p>
+ * Contains UI controls for presenting the game status to the player.
+ * </p>
  */
-public class StatusBar
-{
+public class StatusBar {
     /**
      * The height of the StatusBar
      */
-    public static final int HEIGHT = 50; //Used to set height of status bar
+    public static final int HEIGHT = 50;
 
-    /**
-     * The amount of items that are in the StatusBar
-     */
-    private static final int ITEM_COUNT = 4; //Used to set width of controls on bar
+    // The amount of items that are in the StatusBar. It is used to set width of controls on bar.
+    private static final int ITEM_COUNT = 4;
 
-    /**
-     * The width of the StatusBar
-     */
+    // The width of the StatusBar.
     private static final int WIDTH = (int) Gdx.graphics.getWidth() / ITEM_COUNT;
 
-    /**
-     * The background color of the StatusBar
-     */
+    // The background color of the StatusBar.
     private static final Color BACKGROUND_COLOR = Color.GRAY;
 
     /**
-     * The stage to render the elements to
+     * The stage to render the elements to.
      */
     public Stage stage;
 
-    /**
-     * The different skins for different elements
-     */
+    // The different skins for different elements.
     private Skin buttonSkin;
     private Skin labelSkin;
     private PauseScreen pauseScreen;
@@ -59,11 +52,14 @@ public class StatusBar
     private GameMain game;
 
     /**
-     * The initializer for the StatusBar
-     * Sets up UI controls and adds them to the stage ready for rendering
+     * The initializer for the StatusBar.
+     * <p>
+     * Sets up UI controls and adds them to the stage ready for rendering.
+     *
+     * @param game The game object of this status bar.
+     * </p>
      */
-    public StatusBar(final GameMain game)
-    {
+    public StatusBar(final GameMain game) {
         this.game = game;
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         this.pauseScreen = new PauseScreen(game);
@@ -105,7 +101,7 @@ public class StatusBar
     }
 
     /**
-     * Updates the status bar
+     * Updates the status bar.
      */
     public void updateMain() {
         this.scoreLabel.setText(String.format("Score: %1$d", this.game.scoreTracker.collectScore((x, y, z, i) -> {
@@ -115,8 +111,7 @@ public class StatusBar
     }
 
     /**
-     * Renders the status bar
-     * Should be called within the render() method of a screen
+     * Renders the status bar.
      */
     public void renderMain() {
         stage.act();
@@ -124,38 +119,30 @@ public class StatusBar
     }
 
     /**
-     * This method is called on a window resize
+     * This method is called on a window resize.
      *
-     * @param width  - the new width
-     * @param height - the new height
+     * @param width the new width.
+     * @param height the new height.
      */
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
     /**
-     * This disposes all the elements
+     * This disposes all the elements.
      */
-    public void dispose()
-    {
+    public void dispose() {
         stage.dispose();
     }
 
-    /**
-     * Sets up skin variables used for defining UI control styles
-     */
-    private void initSkins()
-    {
+    // Sets up skin variables used for defining UI control styles.
+    private void initSkins() {
         initButtonSkin();
         initLabelSkin();
     }
 
-    /**
-     * Sets up the skin for buttons on the status bar
-     */
-    private void initButtonSkin()
-    {
+    // Sets up the skin for buttons on the status bar.
+    private void initButtonSkin() {
         //Create a font
         BitmapFont font = new BitmapFont();
         buttonSkin = new Skin();
@@ -178,9 +165,7 @@ public class StatusBar
 
     }
 
-    /**
-     * Sets up the skin for labels on the status bar
-     */
+    // Sets up the skin for labels on the status bar.
     private void initLabelSkin()
     {
         //Create a font

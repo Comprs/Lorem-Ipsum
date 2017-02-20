@@ -1,36 +1,34 @@
 package me.lihq.game.screen.elements;
 
 /**
- * A button to use with the SpeechBox element
- * Use in an ArrayList, and pass into SpeechBox
+ * A button to use with the SpeechBox element.
  */
-public class SpeechBoxButton
-{
+public class SpeechBoxButton {
     /**
-     * The text to display on the button
+     * The text to display on the button.
      */
     public String text;
 
     /**
-     * The int to return as a result of the button being pressed
+     * The int to return as a result of the button being pressed.
      */
     public int result;
 
     /**
-     * The event handler that listens for the click event
+     * The event handler that listens for the click event.
      */
     public EventHandler eventHandler;
 
     /**
-     * Constructor for SpeechBoxButton
+     * Constructor for SpeechBoxButton.
      *
-     * @param buttonText      String to display on button
-     * @param eventHandlerVal On click event handler - use a Lambda function (Java8 only)
+     * @param buttonText String to display on button.
+     * @param buttonResult The result to give.
+     * @param eventHandlerVal On click event handler.
      */
-    public SpeechBoxButton(String buttonText, int buttonresult, EventHandler eventHandlerVal)
-    {
+    public SpeechBoxButton(String buttonText, int buttonResult, EventHandler eventHandlerVal) {
         text = buttonText;
-        result = buttonresult;
+        result = buttonResult;
         eventHandler = eventHandlerVal;
     }
 
@@ -50,8 +48,7 @@ public class SpeechBoxButton
      * <pre>
      * SpeechBoxButton.eventHandler.trigger();</pre>
      */
-    public interface EventHandler
-    {
+    public interface EventHandler {
         void trigger(int result);
     }
 }

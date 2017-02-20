@@ -17,13 +17,12 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import me.lihq.game.GameMain;
 
 /**
- * Creates the base Journal components including the background image, and left hand menu. Also allows the selection of
- * Clues, Speech or Notepad for display and renders these objects.
- * @author jacobwunwin
- *
+ * Creates the base Journal components including the background image, and left hand menu.
+ * <p>
+ * Also allows the selection of Clues, Speech or Notepad for display and renders these objects.
+ * </p>
  */
 public class Journal {
-
     enum State {
         clues, notepad
     }
@@ -47,19 +46,22 @@ public class Journal {
     }
 
     /**
-     * Initialises the skin used across the journal
-     * @return
+     * Initialises the skin used across the journal.
+     *
+     * @return The new skin
      */
     public Skin initSkin() {
-        Skin skin = new Skin(Gdx.files.internal("skins/skin_pretty/skin.json")); //load ui skin from assets
+        // Load ui skin from assets
+        Skin skin = new Skin(Gdx.files.internal("skins/skin_pretty/skin.json"));
         return skin;
     }
 
     /**
      * Initialises the Journal GUI elements and places them.
-     * @param uiSkin
-     * @param game
-     * @return
+     *
+     * @param uiSkin The ui skin to use.
+     * @param game The game object of this journal.
+     * @return The fully initialised journal.
      */
     public Stage initJournal(Skin uiSkin, GameMain game) {
         Stage stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
@@ -117,7 +119,7 @@ public class Journal {
     }
 
     /**
-     * Updates the input processors based on the current state
+     * Updates the input processors based on the current state.
      */
     public void updateMain() {
         InputMultiplexer multiplexer = new InputMultiplexer();
@@ -158,7 +160,7 @@ public class Journal {
     }
 
     /**
-     * This method disposes of all elements
+     * This method disposes of all elements.
      */
     public void dispose() {
         //Called when disposing the main menu
@@ -170,8 +172,8 @@ public class Journal {
     /**
      * This method is called when the window is resized.
      *
-     * @param width  - The new width
-     * @param height - The new height
+     * @param width The new width
+     * @param height The new height
      */
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);

@@ -25,12 +25,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.lihq.game.GameMain;
 
-/**
- * @author jacobwunwin
- *
- */
 public class CharacterGeneration {
-
     public Stage stage;
     private Skin uiSkin;
     private Sprite backgroundImage;
@@ -41,10 +36,6 @@ public class CharacterGeneration {
     private ArrayList<Sprite> costumes;
     private String[] costumeList;
     private int currentCostumePointer;
-
-    /**
-     * This is the camera for the screen
-     */
     private OrthographicCamera camera = new OrthographicCamera();
 
     public CharacterGeneration(GameMain game) {
@@ -65,8 +56,9 @@ public class CharacterGeneration {
     }
 
     /**
-     * Initialises the costume generation
-     * @param stage
+     * Initialises the costume generation.
+     *
+     * @param stage The stage to place UI elements onto.
      */
     private void initCostumeSelection(Stage stage) {
         JsonValue jsonData = new JsonReader().parse(Gdx.files.internal("people/player/sprite_sets/sprites.JSON"));
@@ -117,8 +109,9 @@ public class CharacterGeneration {
     }
 
     /**
-     * Initialises and places the generation screen GUI
-     * @return
+     * Initialises and places the generation screen GUI.
+     *
+     * @return The resulting UI.
      */
     private Stage initGeneration() {
 
@@ -206,8 +199,9 @@ public class CharacterGeneration {
     }
 
     /**
-     * Initialises the skin used across the journal
-     * @return
+     * Initialises the skin used across the journal.
+     *
+     * @return The new skin.
      */
     public Skin initSkin() {
         Skin skin = new Skin(Gdx.files.internal("skins/skin_pretty/skin.json")); //load ui skin from assets
@@ -215,7 +209,7 @@ public class CharacterGeneration {
     }
 
     /**
-     * Renders the character generation screen
+     * Renders the character generation screen.
      */
     public void renderMain() {
         this.batch.begin();
