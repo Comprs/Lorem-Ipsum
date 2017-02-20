@@ -39,19 +39,7 @@ public class Player extends AbstractPerson
     public Player(String name, String imgSrc, int tileX, int tileY)
     {
         super(name, "people/player/sprite_sets/" + imgSrc, tileX, tileY);
-        importDialogue("Player.JSON");
         animTime = Settings.TPS / 7f;
-    }
-
-    /**
-     * Reads in the JSON file of tha character and stores dialogue in the dialogue HashMap
-     *
-     * @param fileName - The file to read from
-     */
-    @Override
-    public void importDialogue(String fileName)
-    {
-        jsonData = new JsonReader().parse(Gdx.files.internal("people/player/" + fileName));
     }
 
     /**
@@ -220,24 +208,6 @@ public class Player extends AbstractPerson
             //TODO: Look into making a getter for the players Game this way we can do this.getGame() here instead of GameMain.
 
             GameMain.me.navigationScreen.updateTiledMapRenderer();
-        }
-    }
-
-    /**
-     * This method gets the speech based on what clue it is and the selected personality
-     *
-     * @param clue  the clue to be questioned about
-     * @param style the style of questioning
-     * @return (String) - The speech to add to the SpeechBox
-     */
-    @Override
-    public String getSpeech(Clue clue, Personality style)
-    {
-        String key = clue.getName();
-        if (!jsonData.get("Responses").has(key)) {
-            return jsonData.get("noneResponses").getString(0);
-        } else {
-            return jsonData.get("Responses").get(key).getString(style.toString());
         }
     }
 }
