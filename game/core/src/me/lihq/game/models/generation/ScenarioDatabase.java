@@ -350,13 +350,29 @@ public class ScenarioDatabase {
         //for each subsequent response that isn't dead, add a questionintent
         //ensure that a questionIntent within a single tree is not a duplicate
         for(DataDialogueTree tree: this.DataDialogueTrees) {
+            HashMap<Integer, DataQuestionIntent> unusedQuestionIntents = (HashMap) this.questionIntents.clone();
             for(List<DataQuestionIntent> dQISet: tree.questionLayers) {
+                List<DataResponseIntent> tmpRILayer = new ArrayList<>();
+                //for every dqi in the current layer of the current tree generate a RI
                 for (DataQuestionIntent dQI: dQISet) {
                     //select a random class from the dialoguetree
                     Classes ranClass = tree.classes.get(ran.nextInt(tree.classes.size()));
                     //get the set of possible responseIntents for the current questionIntent
                     List<Integer> respSetID = this.questionToResponses.get(dQI.id);
                     //select a responseIntent based on a randomly selected class of our DT/character
+                    tmpRILayer.add(this.responseIntents.get(respSetID.get(ranClass.ordinal())));
+                }
+                tree.responseLayers.add(tmpRILayer);
+                //if there exists any living responseIntent in the latest responseintent layer
+                //add a new QuestionIntent layer and add randomly selected questionIntents.
+                List<DataQuestionIntent> tmpQILayer = new ArrayList<>();
+                for(DataResponseIntent dRI: tree.responseLayers.get(tree.responseLayers.size()-1)) {
+                    if(!dRI.isDead) {
+                        int ranQuestionIndex = ran.nextInt(unusedQuestionIntents.size());
+                        tmpQILayer.add(unusedQuestionIntents.get(ranQuestionIndex));
+                        unusedQuestionIntents.remove(ranQuestionIndex);
+                    }
+                    tree.questionLayers.add(tmpQILayer);
                 }
             }
         }
