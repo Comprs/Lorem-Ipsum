@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import me.lihq.game.models.Clue;
 import me.lihq.game.models.Room;
+import me.lihq.game.models.Dialogue.DialogueTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,8 @@ public class NPC extends AbstractPerson
     private boolean isKiller = false;
     private boolean isVictim = false;
 
+    public DialogueTree dialogueTree;
+
     /**
      * This indicates whether the NPC has been accused.
      */
@@ -55,14 +58,14 @@ public class NPC extends AbstractPerson
      * @param spriteSheet - Spritesheet for this NPC
      * @param canBeKiller - Boolean whether they can or cannot be the killer
      */
-    public NPC(String name, String spriteSheet, int tileX, int tileY, Room room, boolean canBeKiller, String jsonFile)
+    public NPC(String name, String spriteSheet, int tileX, int tileY, Room room, boolean canBeKiller, DialogueTree dialogueTreee)
     {
         super(name, "people/NPCs/" + spriteSheet, tileX, tileY);
         this.setRoom(room);
         this.random = new Random();
         this.canBeKiller = canBeKiller;
 
-        importDialogue(jsonFile);
+        this.dialogueTree = dialogueTree;
     }
 
     /**
@@ -75,17 +78,6 @@ public class NPC extends AbstractPerson
         this.randomMove();
     }
 
-    /**
-     * Reads in the JSON file of tha character and stores dialogue in the dialogue HashMap
-     *
-     * @param fileName - The filename to read from
-     */
-    @Override
-    public void importDialogue(String fileName)
-    {
-        jsonData = new JsonReader().parse(Gdx.files.internal("people/NPCs/" + fileName));
-        this.personality = Personality.valueOf(jsonData.getString("personality"));
-    }
 
     /**
      * Allow the NPC to move around their room.
@@ -231,14 +223,10 @@ public class NPC extends AbstractPerson
      * @param style the style of questioning
      * @return (String) the speech
      */
-    @Override
     public String getSpeech(Clue clue, Personality style)
     {
-        if (style == this.personality) {
-            return getSpeech(clue);
-        } else {
-            return getSpeech("");
-        }
+        return null;
+
     }
 
     /**

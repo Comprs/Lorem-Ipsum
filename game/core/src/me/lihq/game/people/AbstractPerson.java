@@ -200,54 +200,6 @@ public abstract class AbstractPerson extends Sprite
     }
 
     /**
-     * Reads in the JSON file of tha character and stores dialogue in the dialogue HashMap
-     *
-     * @param fileName
-     */
-    public abstract void importDialogue(String fileName);
-
-    /**
-     * Gets a random item from the correct dictionary key.
-     *
-     * @param key
-     * @return
-     */
-    public String getSpeech(String key)
-    {
-        //TODO: Randomise the noneResponse
-        try {
-            if (!jsonData.get("Responses").has(key)) {
-                return jsonData.get("noneResponses").getString(0);
-            } else {
-                return jsonData.get("Responses").getString(key);
-            }
-        } catch (Exception e) {
-            return "error speech not working";
-        }
-    }
-
-    /**
-     * This method returns the response based on the clue given
-     *
-     * @param clue - The clue to get the response for
-     * @return (String) the string response
-     */
-    public String getSpeech(Clue clue)
-    {
-        return this.getSpeech(clue.getName());
-    }
-
-
-    /**
-     * This handles speech for a clue that has a question style
-     *
-     * @param clue  the clue to be questioned about
-     * @param style the style of questioning
-     * @return the speech
-     */
-    public abstract String getSpeech(Clue clue, Personality style);
-
-    /**
      * Updates the texture region based upon how far though the animation time it is.
      */
     public void updateTextureRegion()
