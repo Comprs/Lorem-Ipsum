@@ -18,6 +18,7 @@ import me.lihq.game.models.Clue;
 import me.lihq.game.models.Map;
 import me.lihq.game.models.Room;
 import me.lihq.game.models.Vector2Int;
+import me.lihq.game.models.generation.ScenarioDatabase;
 import me.lihq.game.people.NPC;
 import me.lihq.game.people.Player;
 import me.lihq.game.screen.AbstractScreen;
@@ -109,6 +110,8 @@ public class GameMain extends Game
         //set up the screen and display the first room
         this.navigationScreen = new NavigationScreen(this);
         this.navigationScreen.updateTiledMapRenderer();
+
+        ScenarioDatabase db = new ScenarioDatabase("scenarioo_gen.db", traits);
 
     }
 
