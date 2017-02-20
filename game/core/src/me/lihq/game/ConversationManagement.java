@@ -109,7 +109,7 @@ public class ConversationManagement {
         // conversation early and with the appropriate text.
         if (this.tempNPC.isAccused()) {
             speechboxMngr.addSpeechBox(new SpeechBox(
-                "This person is no longer willing to cooperate", 5
+                "This person is no longer willing to cooperate", 2
             ));
             finishConverstation();
             return;
