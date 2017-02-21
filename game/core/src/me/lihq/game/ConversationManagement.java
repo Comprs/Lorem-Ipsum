@@ -184,7 +184,8 @@ public class ConversationManagement {
         ArrayList<String> intents = this.tempNPC.dialogueTree.getAvailableIntentsAsString();
         int intent = intents.indexOf(this.tempCurrentIntent);
         String response = this.tempNPC.dialogueTree.selectStyledQuestion(intent, questionStyle, GameMain.me);
-        speechboxMngr.addSpeechBox(new SpeechBox(response, 5));
+        speechboxMngr.addSpeechBox(new SpeechBox(response, 3));
+        this.finishConverstation();
     }
 
 
