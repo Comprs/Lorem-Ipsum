@@ -74,7 +74,7 @@ public class Clues {
 
         //loops through all clues, adding them to the clues table
         for (Clue clue : this.game.player.collectedClues) {
-            Label label = new Label (clue.getDescription(), this.uiSkin);
+            Label label = new Label (clue.getName(), this.uiSkin);
             cluesTable.add(label).width(280f); //set a maximum width on the row of 300 pixels
             cluesTable.row(); //end the row
         }

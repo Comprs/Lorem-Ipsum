@@ -345,7 +345,7 @@ public class ScenarioDatabase {
             int mClassID = mClass.ordinal();
             ResultSet resSet = stmt.executeQuery("SELECT * from Weapons WHERE classID = " +
                     Integer.toString(mClassID));
-            Clue mClue = new Clue(resSet.getString("name"), resSet.getString("description"));
+            Clue mClue = new Clue(resSet.getString("name"), resSet.getString("description"), Assets.getArrowDirection("NORTH"));
             this.murderWeaponClue = mClue;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -516,6 +516,8 @@ public class ScenarioDatabase {
             }
             npcs.add(new NPC(character.name + ".png",x,y, thisRoom, dTree));
         }
+
+        this.instClues.add(this.murderWeaponClue);
 
         for(DataClue clue: this.clues.values()) {
             this.instClues.add(new Clue(clue.name, clue.description,  Assets.getArrowDirection("NORTH")));
