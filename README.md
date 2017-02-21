@@ -1,5 +1,5 @@
 # Lorem Ipsum [![CircleCI](https://circleci.com/gh/Brookke/Lorem-Ipsum.svg?style=svg&circle-token=88a08119c648799c8c1241249131701e1298e614)](https://circleci.com/gh/Brookke/Lorem-Ipsum)
-Visit out website at https://sites.google.com/s/0BzIaZnMfS2OadVFfNUY5TVlpUjQ/p/0BzIaZnMfS2OaeUpoZXh1cnU1U0U/preview?authuser=0, or read the documentation at https://teamfarce.github.io/Lorem-Ipsum/javadoc/
+Visit out website at https://sites.google.com/york.ac.uk/teamfarce/home, or read the documentation at https://teamfarce.github.io/Lorem-Ipsum/javadoc/
 
 ## Get started
 ### What you need
