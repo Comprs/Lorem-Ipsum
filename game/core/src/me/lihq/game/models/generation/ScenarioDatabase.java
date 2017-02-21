@@ -102,6 +102,7 @@ public class ScenarioDatabase {
         this.responseIntents = new HashMap<>();
         this.clues = new HashMap<>();
         this.DataDialogueTrees = new ArrayList<>();
+        this.styles = new ArrayList<>();
 
         this.instCharacters = new ArrayList<>();
         this.instDialogueTree = new ArrayList<>();
@@ -113,15 +114,13 @@ public class ScenarioDatabase {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
+
         Random ranGen = new Random();
         try (Connection sqlConn = DriverManager.getConnection("jdbc:sqlite:" + dbName)) {
-            System.out.println("Connection to db made!");
             this.loadCharacters(sqlConn);
             this.loadRelations(sqlConn);
-            System.out.println(traits);
             this.loadStyles(traits);
 
             //choosing our murderer class from the set of classes, then
@@ -141,7 +140,7 @@ public class ScenarioDatabase {
             this.loadQuestionIntent(sqlConn);
             this.loadQuestionToResponse(sqlConn);
             this.loadResponseIntent(sqlConn);
-
+            //currentcrasher
             this.generateTrees();
             this.trimClues();
 
@@ -179,6 +178,7 @@ public class ScenarioDatabase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     private void loadStyles(List<String> traits) {
@@ -232,7 +232,7 @@ public class ScenarioDatabase {
             ResultSet resSet = stmt.executeQuery("SELECT * from QuestionToResponse");
             while(resSet.next()) {
                 List<Integer> tmp = new ArrayList<>();
-                for (int counter = 0; counter < 9; counter++) {
+                for (int counter = 0; counter < 8; counter++) {
                     int tmpVal = resSet.getInt("responseIntent" + Integer.toString(counter));
                     if(!resSet.wasNull())
                     tmp.add(tmpVal);
@@ -302,12 +302,10 @@ public class ScenarioDatabase {
                 int tmpClueID = resSet.getInt("clue");
                 if (!resSet.wasNull()) {
                     DataClue tmpDataClue = this.clues.get(tmpClueID);
-                        for (Classes mClass: this.murderer.classes) {
-                            if(tmpDataClue.classes.contains(mClass)) {
-                                responseIntent.clue = new Clue(tmpDataClue.name, tmpDataClue.description);
-                                responseIntent.correctResponse = responseIntent.correctResponse + tmpDataClue.inDialogue;
-                            }
-                        }
+                    if(tmpDataClue != null) {
+                        responseIntent.clue = new Clue(tmpDataClue.name, tmpDataClue.description);
+                        responseIntent.correctResponse = responseIntent.correctResponse + tmpDataClue.inDialogue;
+                    }
                 }
                 this.responseIntents.put(responseIntent.id, responseIntent);
             }
@@ -323,7 +321,7 @@ public class ScenarioDatabase {
                 DataClue clue = new DataClue();
                 clue.classes = this.parseClassString(resSet.getString("classes"));
                 for (Classes mClass: this.murderer.classes) {
-                    if (clue.classes.contains(mClass) || clue.classes.contains(vClass)) {
+                    if (clue.classes.contains(mClass)) {
                         clue.id = resSet.getInt("id");
                         clue.name = resSet.getString("name");
                         clue.description = resSet.getString("description");
@@ -354,12 +352,18 @@ public class ScenarioDatabase {
 
     //removes questions that don't have the style chosen by the player from the set of questions
     private void trimQuestions() {
+        List<Integer> idsToBeRemoved = new ArrayList<>();
         for (DataQuestion q: this.questions.values()) {
             for (Question.Style style: this.styles) {
                 if (q.style != style) {
-                    this.questions.remove(q.id);
+                    idsToBeRemoved.add(q.id);
                 }
             }
+        }
+        Set<Integer> ids = new HashSet<>();
+        ids.addAll(idsToBeRemoved);
+        for (int id: ids) {
+            this.questions.remove(id);
         }
     }
 
@@ -369,7 +373,11 @@ public class ScenarioDatabase {
             cluesPerStoryNode.add(0);
         }
 
-        for (DataClue c: this.clues.values()) {
+        //for (DataClue c: this.clues.values()) {
+        for (int counter = 0; counter < this.clues.values().size(); counter++) {
+            List<DataClue> tempClues = new ArrayList<DataClue>(this.clues.values());
+            DataClue c = tempClues.get(counter);
+
             int numCluesAtNode = cluesPerStoryNode.get(c.storyNode);
             if (numCluesAtNode < 3 && !c.isAbstract) {
                 this.clues.remove(c.id);
@@ -382,20 +390,24 @@ public class ScenarioDatabase {
     private void generateTrees() {
         Random ran = new Random();
         //creating the initial intents for all trees
-        for(int treeIndex = 0; treeIndex < 10; treeIndex++) {
+        for(int treeIndex = 0; treeIndex < this.characters.size(); treeIndex++) {
             List<DataQuestionIntent> tmpQuestionIntents = new ArrayList<>();
-            for (int intentIndex = 0; intentIndex < 4; intentIndex++) {
+            for (int intentIndex = 1; intentIndex < 4; intentIndex++) {
                 tmpQuestionIntents.add(this.questionIntents.get(intentIndex));
             }
             this.DataDialogueTrees.add(new DataDialogueTree());
             this.DataDialogueTrees.get(treeIndex).questionLayers.add(tmpQuestionIntents);
-            this.DataDialogueTrees.get(treeIndex).classes = this.characters.get(treeIndex).classes;
+            this.DataDialogueTrees.get(treeIndex).classes = this.characters.get(treeIndex+1).classes;
         }
+
         //remove the introductory questions so they do not repeat.
-        this.questionIntents.remove(0);
-        this.questionIntents.remove(1);
-        this.questionIntents.remove(2);
-        this.questionIntents.remove(3);
+        /**
+         * this.questionIntents.remove(0);
+            this.questionIntents.remove(1);
+            this.questionIntents.remove(2);
+            this.questionIntents.remove(3);
+         */
+
 
         //for each intent in each layer in each tree add a responseIntent
         //to the matching responseIntent layer
@@ -403,7 +415,9 @@ public class ScenarioDatabase {
         //ensure that a questionIntent within a single tree is not a duplicate
         for(DataDialogueTree tree: this.DataDialogueTrees) {
             HashMap<Integer, DataQuestionIntent> unusedQuestionIntents = (HashMap) this.questionIntents.clone();
-            for(List<DataQuestionIntent> dQISet: tree.questionLayers) {
+            for(int counter = 0; counter < tree.questionLayers.size(); counter++) {
+            //for(List<DataQuestionIntent> dQISet: tree.questionLayers) {
+                List<DataQuestionIntent> dQISet = tree.questionLayers.get(counter);
                 List<DataResponseIntent> tmpRILayer = new ArrayList<>();
                 //for every dqi in the current layer of the current tree generate a RI
                 for (DataQuestionIntent dQI: dQISet) {
@@ -414,7 +428,9 @@ public class ScenarioDatabase {
                     //select a responseIntent based on a randomly selected class of our DT/character
                     tmpRILayer.add(this.responseIntents.get(respSetID.get(ranClass.ordinal())));
                 }
-                tree.responseLayers.add(tmpRILayer);
+                if(tmpRILayer.size()>0){
+                    tree.responseLayers.add(tmpRILayer);
+                }
                 //if there exists any living responseIntent in the latest responseintent layer
                 //add a new QuestionIntent layer and add randomly selected questionIntents.
                 List<DataQuestionIntent> tmpQILayer = new ArrayList<>();
@@ -424,7 +440,9 @@ public class ScenarioDatabase {
                         tmpQILayer.add(unusedQuestionIntents.get(ranQuestionIndex));
                         unusedQuestionIntents.remove(ranQuestionIndex);
                     }
-                    tree.questionLayers.add(tmpQILayer);
+                    if(tmpQILayer.size()>0) {
+                        tree.questionLayers.add(tmpQILayer);
+                    }
                 }
             }
         }
@@ -440,13 +458,13 @@ public class ScenarioDatabase {
             //has a list of quesitonintents that chain
             List<List<QuestionIntent>> tmp = new ArrayList<>();
             //get the end setlayers
-            for(int layerIndex = dTree.questionLayers.size(); layerIndex > 0; layerIndex--) {
+            for(int layerIndex = dTree.questionLayers.size() - 1; layerIndex >= 0; layerIndex--) {
                 List<DataQuestionIntent> latestQLayer = dTree.questionLayers.get(layerIndex);
                 List<DataResponseIntent> latestRLayer = dTree.responseLayers.get(layerIndex);
+                List<QuestionIntent> tmpQuestionIntents = new ArrayList<>();
 
                 //for each dQuestion and dResponse in the layers, link them together
                 for (int Index = 0; Index < latestQLayer.size(); Index++) {
-                    List<QuestionIntent> tmpQuestionIntents = new ArrayList<>();
                     QuestionIntent tmpQI = new QuestionIntent(latestQLayer.get(Index).questions,
                             latestQLayer.get(Index).description);
                     ResponseIntent tmpRI = new ResponseIntent(latestRLayer.get(Index).responses,
@@ -455,9 +473,10 @@ public class ScenarioDatabase {
                     tmpQI.attachResponse(tmpRI);
                     //add the QI to the list representing the current "layer"
                     tmpQuestionIntents.add(tmpQI);
-                    //add that list to the tmp so that they can continue to be processed in the later
-                    tmp.add(tmpQuestionIntents);
                 }
+                //add that list to the tmp so that they can continue to be processed in the later
+                tmp.add(tmpQuestionIntents);
+                System.out.println(tmp.size());
             }
             //begin attaching the question/response pairs together
             for(int Index = tmp.size() - 1; Index > 0; Index--) {
@@ -482,8 +501,8 @@ public class ScenarioDatabase {
 
         for(int counter = 0; counter < this.instDialogueTree.size(); counter++) {
             DialogueTree dTree = this.instDialogueTree.get(counter);
-            DataCharacter character = this.characters.get(counter);
-            this.instCharacters.add(new NPC(character.name,1,1, rooms.get(ran.nextInt(rooms.size())), dTree));
+            DataCharacter character = this.characters.get(counter+1);
+            this.instCharacters.add(new NPC(character.name + ".png",1,1, rooms.get(ran.nextInt(rooms.size())), dTree));
         }
 
         for(DataClue clue: this.clues.values()) {
@@ -491,7 +510,7 @@ public class ScenarioDatabase {
         }
 
         //ensure each room has one clue
-        for(int index = 0; index < rooms.size(); index++) {
+        for(int index = 0; index < rooms.size()-1; index++) {
             rooms.get(index).addClue(this.instClues.get(index));
         }
         for(int index = rooms.size()-1;index < this.instClues.size(); index++) {
