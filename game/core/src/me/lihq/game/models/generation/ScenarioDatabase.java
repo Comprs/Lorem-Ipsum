@@ -538,7 +538,9 @@ public class ScenarioDatabase {
 
         for(int index = rooms.size()-1;index < this.instClues.size(); index++) {
             int random = ran.nextInt(rooms.size());
-            rooms.get(random).addClue(this.instClues.get(index));
+            Room room = rooms.get(random);
+            Vector2Int randHidingSpot = room.getRandHidingSpot();
+            room.addClue(this.instClues.get(index).setTileCoordinates(randHidingSpot));
         }
     }
 
