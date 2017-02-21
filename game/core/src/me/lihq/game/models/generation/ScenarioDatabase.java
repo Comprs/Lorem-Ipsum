@@ -119,35 +119,42 @@ public class ScenarioDatabase {
         }
 
         Random ranGen = new Random();
-        try (Connection sqlConn = DriverManager.getConnection("jdbc:sqlite:" + dbName)) {
-            this.loadCharacters(sqlConn);
-            this.loadRelations(sqlConn);
-            this.loadStyles(traits);
 
-            //choosing our murderer class from the set of classes, then
-            //a random victim class from the classes present in the relation
-            //must take care to ensure things are truly random.
-            int randomNum = ranGen.nextInt(Classes.values().length);
-            Classes murderClass = Classes.values()[randomNum];
-            List<Classes> victimSet = this.murderVictimRelations.get(murderClass);
-            Classes victimClass = victimSet.get(ranGen.nextInt(victimSet.size()));
-
-            this.chooseMurdererVictim(ranGen, murderClass, victimClass);
-            this.loadClue(sqlConn, victimClass);
-            this.loadWeapon(sqlConn, murderClass);
-
-            this.loadQuestion(sqlConn);
-            this.trimQuestions();
-            this.loadQuestionIntent(sqlConn);
-            this.loadQuestionToResponse(sqlConn);
-            this.loadResponseIntent(sqlConn);
-            //currentcrasher
-            this.generateTrees();
-            this.trimClues();
-
+        Connection sqlConn = null;
+        try {
+            sqlConn = DriverManager.getConnection("jdbc:sqlite::resource:" + dbName);
         } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                sqlConn = DriverManager.getConnection("jdbc:sqlite:" + dbName);
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
+
+        this.loadCharacters(sqlConn);
+        this.loadRelations(sqlConn);
+        this.loadStyles(traits);
+
+        //choosing our murderer class from the set of classes, then
+        //a random victim class from the classes present in the relation
+        //must take care to ensure things are truly random.
+        int randomNum = ranGen.nextInt(Classes.values().length);
+        Classes murderClass = Classes.values()[randomNum];
+        List<Classes> victimSet = this.murderVictimRelations.get(murderClass);
+        Classes victimClass = victimSet.get(ranGen.nextInt(victimSet.size()));
+
+        this.chooseMurdererVictim(ranGen, murderClass, victimClass);
+        this.loadClue(sqlConn, victimClass);
+        this.loadWeapon(sqlConn, murderClass);
+
+        this.loadQuestion(sqlConn);
+        this.trimQuestions();
+        this.loadQuestionIntent(sqlConn);
+        this.loadQuestionToResponse(sqlConn);
+        this.loadResponseIntent(sqlConn);
+        //currentcrasher
+        this.generateTrees();
+        this.trimClues();
     }
 
     private List<Classes> parseClassString(String classString) {
