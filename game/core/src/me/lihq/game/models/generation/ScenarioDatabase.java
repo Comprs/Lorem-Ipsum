@@ -7,6 +7,7 @@ import me.lihq.game.Assets;
 import me.lihq.game.models.Clue;
 import me.lihq.game.models.Dialogue.*;
 import me.lihq.game.models.Room;
+import me.lihq.game.models.Vector2Int;
 import me.lihq.game.people.NPC;
 import me.lihq.game.screen.elements.journal.Clues;
 
@@ -502,7 +503,18 @@ public class ScenarioDatabase {
         for(int counter = 0; counter < this.instDialogueTree.size(); counter++) {
             DialogueTree dTree = this.instDialogueTree.get(counter);
             DataCharacter character = this.characters.get(counter+1);
-            this.instCharacters.add(new NPC(character.name + ".png",1,1, rooms.get(ran.nextInt(rooms.size())), dTree));
+            System.out.println("Adding NPC");
+            Room thisRoom = rooms.get(ran.nextInt(rooms.size()));
+
+            boolean positionFound = false;
+            int x = 0;
+            int y = 0;
+            while (!positionFound){
+                positionFound = thisRoom.isWalkableTile(x, y);
+                x++;
+                y++;
+            }
+            npcs.add(new NPC(character.name + ".png",x,y, thisRoom, dTree));
         }
 
         for(DataClue clue: this.clues.values()) {
@@ -511,8 +523,11 @@ public class ScenarioDatabase {
 
         //ensure each room has one clue
         for(int index = 0; index < rooms.size()-1; index++) {
-            rooms.get(index).addClue(this.instClues.get(index));
+            Room room = rooms.get(index);
+            Vector2Int randHidingSpot = room.getRandHidingSpot();
+            room.addClue(this.instClues.get(index).setTileCoordinates(randHidingSpot));
         }
+
         for(int index = rooms.size()-1;index < this.instClues.size(); index++) {
             int random = ran.nextInt(rooms.size());
             rooms.get(random).addClue(this.instClues.get(index));

@@ -95,12 +95,16 @@ public class GameMain extends Game
         this.player = new Player("Player", playerCostume, 3, 6);
         this.player.setRoom(gameMap.getRoom(0));
 
+
+        ScenarioDatabase db = new ScenarioDatabase("scenario_gen.db", traits);
+        db.initialiseGame(gameMap.getRooms(), this.NPCs);
+
         //set up the screen and display the first room
         this.navigationScreen = new NavigationScreen(this);
         this.navigationScreen.updateTiledMapRenderer();
 
-        ScenarioDatabase db = new ScenarioDatabase("scenario_gen.db", traits);
-        db.initialiseGame(gameMap.getRooms(), this.NPCs);
+        gameLoop();
+
     }
 
     /**
@@ -124,8 +128,6 @@ public class GameMain extends Game
         FPS = new FPSLogger();
 
         this.scoreTracker = new ScoreTracker();
-
-        gameLoop();
     }
 
     /**

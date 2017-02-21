@@ -152,6 +152,7 @@ public class ConversationManagement {
         ArrayList<String> intents = this.tempNPC.dialogueTree.getAvailableIntentsAsString();
         //generates the ordered array list of all available styles for the current tempIntent
         ArrayList<String> styles = this.tempNPC.dialogueTree.getAvailableStyles(intents.indexOf(this.tempCurrentIntent));
+
         for (int i = 0; i < styles.size(); i++){
             buttons.add(new SpeechBoxButton(styles.get(i), i, eventHandler));
         }
@@ -172,8 +173,8 @@ public class ConversationManagement {
         ArrayList<SpeechBoxButton> buttons = new ArrayList<>();
         SpeechBoxButton.EventHandler eventHandler = (result) -> handleResponse(QuestionStage.INTENT, result);
 
-        buttons.add(new SpeechBoxButton("Ask Question", 0, eventHandler));
-        buttons.add(new SpeechBoxButton("Next Question", 1, eventHandler));
+        buttons.add(new SpeechBoxButton("Ask Question", 1, eventHandler));
+        buttons.add(new SpeechBoxButton("Next Question", 0, eventHandler));
 
         speechboxMngr.addSpeechBox(new SpeechBox(this.tempCurrentIntent, buttons, -1));
     }
