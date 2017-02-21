@@ -184,6 +184,7 @@ public class ScenarioDatabase {
 
     private void loadStyles(List<String> traits) {
         for(String trait: traits) {
+            trait = trait.replaceAll("\\s", "");
             for (Question.Style style: Question.Style.values()) {
                 if (trait.equalsIgnoreCase(style.name())) {
                     this.styles.add(style);
@@ -355,15 +356,14 @@ public class ScenarioDatabase {
     private void trimQuestions() {
         List<Integer> idsToBeRemoved = new ArrayList<>();
         for (DataQuestion q: this.questions.values()) {
-            for (Question.Style style: this.styles) {
-                if (q.style != style) {
-                    idsToBeRemoved.add(q.id);
-                }
+
+            if (!this.styles.contains(q.style)) {
+                idsToBeRemoved.add(q.id);
             }
+
         }
-        Set<Integer> ids = new HashSet<>();
-        ids.addAll(idsToBeRemoved);
-        for (int id: ids) {
+
+        for (int id: idsToBeRemoved) {
             this.questions.remove(id);
         }
     }
@@ -525,7 +525,13 @@ public class ScenarioDatabase {
         for(int index = 0; index < rooms.size()-1; index++) {
             Room room = rooms.get(index);
             Vector2Int randHidingSpot = room.getRandHidingSpot();
-            room.addClue(this.instClues.get(index).setTileCoordinates(randHidingSpot));
+            try {
+                if ((randHidingSpot.x != 0) && (randHidingSpot.y != 0)){
+                    room.addClue(this.instClues.get(index).setTileCoordinates(randHidingSpot));
+                }
+            } catch(IndexOutOfBoundsException e) {
+                System.out.println(e.toString());
+            }
         }
 
         for(int index = rooms.size()-1;index < this.instClues.size(); index++) {

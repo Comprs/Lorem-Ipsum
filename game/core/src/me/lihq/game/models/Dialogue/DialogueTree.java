@@ -26,7 +26,7 @@ public class DialogueTree {
     public enum Mood {
         NERVOUS,
         RELAXED,
-        AGGRESSIVE
+        AGGRESSIVE,
     }
 
     /**
@@ -73,7 +73,7 @@ public class DialogueTree {
     public ArrayList<String> getAvailableStyles(int intentSelection){
         ArrayList<String> styledQuestions = new ArrayList<>();
         for (Question styledQuestion : this.questions.get(intentSelection).getStyleChoices()){
-            styledQuestions.add(styledQuestion.getStyle().name() + " : " + styledQuestion.getQuestionText());
+            styledQuestions.add(styledQuestion.getStyle().name());
         }
         return styledQuestions;
     }
